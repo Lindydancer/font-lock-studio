@@ -1,7 +1,7 @@
 # font-lock-studio - interactive debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.0<br>
+*Version:* 0.0.1<br>
 
 *Font Lock Studio* is an *interactive debugger* for Font Lock
 keywords (Emacs syntax highlighting rules).

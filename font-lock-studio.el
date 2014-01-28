@@ -5,7 +5,7 @@
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.0
+;; Version: 0.0.1
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@
 ;; the the next keyword, "b" will set a breakpoint, "g" will run to
 ;; the end (or to the next breakpoint) and "q" will quit.
 ;;
-;; In the following screen shot, you will see the debugger in action.
+;; In the following screenshot, you will see the debugger in action.
 ;; The user has stepped into the last rule (for the second out of
 ;; three times) -- the matches are visualized in the regexp, in the
 ;; source buffer and in the highlight rule. In addition, *auto
@@ -130,7 +130,7 @@
 ;; Furthermore, the red text means a *breakpoint* is set, in this case
 ;; on a highlight rule, which is part of a Font Lock keyword rule.
 ;;
-;; ![See doc/demo.png for screen shor of Font Lock Studio](doc/demo.png)
+;; ![See doc/demo.png for screenshot of Font Lock Studio](doc/demo.png)
 
 ;; Features:
 ;;
@@ -705,7 +705,7 @@ Used when restarting and when the interface buffer is killed."
   (define-key map "s" 'font-lock-studio-step-over)
   (define-key map "w" 'font-lock-studio-display-source)
   (define-key map "x" 'font-lock-studio-explain-state-at-point)
-
+  (define-key map "k" 'font-lock-studio-goto-keyword-at-point)
   (define-key map "a" 'font-lock-studio-restart)
   (define-key map "g" 'font-lock-studio-run)
 
@@ -785,29 +785,17 @@ Used when restarting and when the interface buffer is killed."
 ;; ----------
 ;; TAB prettyfier -- prints TAB characters as \t.
 
-(defvar font-lock-studio-string-output nil)
-
-(defun font-lock-studio-output-to-string (char)
-  "Output CHAR to `font-lock-studio-string-output'.
-If CHAR is a tab character, output \\t."
-  (setq font-lock-studio-string-output
-        (concat font-lock-studio-string-output
-                (if (eq char ?\t)
-                    "\\t"
-                  (list char)))))
-
-
 (defmacro font-lock-studio-with-clean-output-to-string (&rest body)
   "Eval BODY like `progn', collect, clean, and return output as string.
 
 Tab characters are emitted as \\t. Binds `indent-tabs-mode' to
 nil to ensure that indentation doesn't contain tab characters."
-  `(let ((font-lock-studio-string-output "")
-         (standard-output 'font-lock-studio-output-to-string)
-         (indent-tabs-mode nil))
-     (progn
-       ,@body)
-     font-lock-studio-string-output))
+  `(let ((indent-tabs-mode nil))
+     (replace-regexp-in-string
+      "\t" "\\t"
+      (with-output-to-string
+        ,@body)
+      t t)))
 
 
 ;; ----------
@@ -1822,7 +1810,7 @@ breakpoint was reached. A suitable message is displayed."
 (defun font-lock-studio-update-interface-buffer ()
   "Redraw the Font Lock Studio buffer."
   (interactive)
-  (font-lock-studio-command-wrapper))
+  (font-lock-studio-command-wrapper-save-excursion))
 
 
 (defun font-lock-studio-restart ()
@@ -1856,6 +1844,17 @@ With \\[universal-argument] prefix, don't kill the interface buffer."
   "Show the source buffer and the current search location within it."
   (interactive)
   (font-lock-studio-command-wrapper-show-source))
+
+
+(defun font-lock-studio-goto-keyword-at-point ()
+  "Set the keyword at the cursor to be active."
+  (interactive)
+  (font-lock-studio-command-wrapper-show-source
+   (let ((state (get-text-property (point) 'font-lock-studio-state)))
+     (if state
+         (let ((keyword-number (nth 0 state)))
+           (font-lock-studio-fontify-set-keyword keyword-number))
+       (user-error "No keyword here.")))))
 
 
 ;; Note: Does not use `font-lock-studio-command-wrapper', since this
@@ -2471,16 +2470,23 @@ returned nil."
 (defun font-lock-studio-fontify-set-next-keyword ()
   "Set the next keyword to be active.
 Return nil when there are no more keywords."
+  (font-lock-studio-fontify-set-keyword (+ 1 font-lock-studio-keyword-number)))
+
+
+(defun font-lock-studio-fontify-set-keyword (keyword-number)
+  "Set the KEYWORD-NUMBER to be active.
+Return nil if there is no such keyword."
   (setq font-lock-studio-keyword-match-data nil)
-  (let ((next (+ 1 font-lock-studio-keyword-number)))
-    (if (>= next (length font-lock-studio-keywords))
-        (progn
-          (setq font-lock-studio-keyword-number :done)
-          nil)
-      (setq font-lock-studio-keyword-number next)
-      (setq font-lock-studio-highlight-number nil)
-      (setq font-lock-studio-point (car font-lock-studio-region))
-      t)))
+  (setq font-lock-studio-keyword-match-data-saved nil)
+  (setq font-lock-studio-highlight-number nil)
+  (setq font-lock-studio-anchored-state nil)
+  (if (>= keyword-number (length font-lock-studio-keywords))
+      (progn
+        (setq font-lock-studio-keyword-number :done)
+        nil)
+    (setq font-lock-studio-keyword-number keyword-number)
+    (setq font-lock-studio-point (car font-lock-studio-region))
+    t))
 
 
 (defun font-lock-studio-fontify-match-current-keyword ()
