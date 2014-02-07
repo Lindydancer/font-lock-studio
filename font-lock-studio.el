@@ -5,7 +5,7 @@
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.1
+;; Version: 0.0.2
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -2513,23 +2513,24 @@ Update state and return non-nil if found."
 
 LIMIT is the search limit."
   (let ((p font-lock-studio-point)
-        (case-fold-search font-lock-studio-case-fold-search)
-        md)
-    (prog1
-        (with-current-buffer font-lock-studio-buffer
-          ;; Note: Don't set studio buffer local variables here.
-          (with-syntax-table (or font-lock-syntax-table (syntax-table))
-            (goto-char p)
-            (if (if (stringp matcher)
-                    (re-search-forward matcher limit t)
-                  (font-lock-studio-save-buffer-state
-                    (funcall matcher limit)))
-                (progn
+        (case-fold-search font-lock-studio-case-fold-search))
+    (let ((res
+           (with-current-buffer font-lock-studio-buffer
+             ;; Note: Don't set studio buffer local variables here.
+             (with-syntax-table (or font-lock-syntax-table (syntax-table))
+               (goto-char p)
+               (if (if (stringp matcher)
+                       (re-search-forward matcher limit t)
+                     (font-lock-studio-save-buffer-state
+                       (funcall matcher limit)))
+                   (progn
                   (setq p (point))
                   t)
-              nil)))
-      (setq font-lock-studio-keyword-match-data (match-data))
-      (setq font-lock-studio-point p))))
+                 nil)))))
+      (if res
+          (setq font-lock-studio-keyword-match-data (match-data)))
+      (setq font-lock-studio-point p)
+      res)))
 
 
 (defun font-lock-studio-fontify-get-base-highlight (&optional debug)
@@ -2639,7 +2640,8 @@ of the current keyword."
   (set-match-data font-lock-studio-keyword-match-data)
   (with-current-buffer font-lock-studio-buffer
     (font-lock-studio-save-buffer-state
-      (font-lock-apply-highlight highlight))))
+      (font-lock-apply-highlight highlight)))
+  (setq font-lock-studio-keyword-match-data (match-data)))
 
 
 ;; --------------------
@@ -2656,6 +2658,7 @@ of the current keyword."
                  (nth 1 highlight)))
          (multiline font-lock-studio-multiline)
          limit)
+    (set-match-data font-lock-studio-keyword-match-data)
     (with-current-buffer font-lock-studio-buffer
       (goto-char p)
       (let ((pre-match-value (eval expr)))
@@ -2666,6 +2669,7 @@ of the current keyword."
                                  (<= pre-match-value (line-end-position))))
                         pre-match-value
                       (line-end-position)))))
+    (setq font-lock-studio-keyword-match-data (match-data))
     (setq font-lock-studio-point p)
     (setq font-lock-studio-anchored-limit limit)
     (font-lock-studio-fontify-set-next-anchored-state)))
@@ -2674,17 +2678,18 @@ of the current keyword."
 (defun font-lock-studio-fontify-do-anchored-post-match-form ()
   "Run the post-match form of an anchored highlight rule."
   (assert (eq font-lock-studio-anchored-state :post))
-  (set-match-data font-lock-studio-keyword-match-data)
   (let* ((p font-lock-studio-point)
          (highlight (font-lock-studio-fontify-get-base-highlight))
          (expr (if (and font-lock-studio-edebug-active
                         font-lock-studio-edebug-expression-point)
                    (font-lock-studio-fontify-read-edebug-expression)
                  (nth 2 highlight))))
+    (set-match-data font-lock-studio-keyword-match-data)
     (with-current-buffer font-lock-studio-buffer
       (goto-char p)
       (eval expr)
       (setq p (point)))
+    (setq font-lock-studio-keyword-match-data (match-data))
     (setq font-lock-studio-point p)
     (font-lock-studio-fontify-set-next-anchored-state)))
 
@@ -2739,58 +2744,65 @@ Return nil when no match was found."
 In the state :matcher, match is assumed to have succeeded if
 MATCHED is non-nil.
 
-Return t if still inside the current anchored highlight rule.
-
 If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
   (unless base-highlight
     (setq base-highlight (font-lock-studio-fontify-get-base-highlight)))
   (assert (not (numberp base-highlight)))
-  (let ((try-next-highlight-number nil)
-        (res t)
-        (len (length base-highlight)))
-    (cond ((null font-lock-studio-anchored-state)
-           (setq font-lock-studio-keyword-match-data-saved
-                 font-lock-studio-keyword-match-data)
-           ;; Set default anchored search limite. This is used when
-           ;; there is no :pre form or when it is skipped.
-           (setq font-lock-studio-anchored-limit
-                 (let ((p font-lock-studio-point))
-                   (with-current-buffer font-lock-studio-buffer
-                     (save-excursion
-                       (goto-char p)
-                       (line-end-position)))))
-           (setq font-lock-studio-anchored-state
-                 (if (> len 1)
-                     :pre
-                   :matcher)))
-          ((eq font-lock-studio-anchored-state :pre)
-           (setq font-lock-studio-anchored-state :matcher))
-          ((eq font-lock-studio-anchored-state :matcher)
-           (if matched
-               (setq try-next-highlight-number 0)
-             (setq font-lock-studio-keyword-match-data
-                   font-lock-studio-keyword-match-data-saved)
-             (setq font-lock-studio-keyword-match-data-saved nil)
-             (if (>= len 3)
-                 (setq font-lock-studio-anchored-state :post)
-               (font-lock-studio-fontify-set-next-highlight)
-               (setq res nil))))
-          ((eq font-lock-studio-anchored-state :post)
-           (font-lock-studio-fontify-set-next-highlight)
-           (setq res nil))
-          ((numberp font-lock-studio-anchored-state)
-           (setq try-next-highlight-number
-                 (+ 1 font-lock-studio-anchored-state)))
-          (t
-           (error "Not in anchored rule")))
-    (if try-next-highlight-number
-        (if (<= (+ try-next-highlight-number 1) (- len 3))
-            (setq font-lock-studio-anchored-state
-                  try-next-highlight-number)
-          (setq font-lock-studio-keyword-match-data
-                font-lock-studio-keyword-match-data-saved)
-          (setq font-lock-studio-anchored-state :matcher)))
-    res))
+  (let ((len (length base-highlight)))
+    (while (progn
+             (font-lock-studio-fontify-set-next-anchored-state0
+              matched base-highlight)
+             (cond ((null font-lock-studio-anchored-state)
+                    nil)
+                   ((eq font-lock-studio-anchored-state :pre)
+                    (<= len 1))
+                   ((eq font-lock-studio-anchored-state :post)
+                    (<= len 2))
+                   ((eq font-lock-studio-anchored-state :matcher)
+                    nil)
+                   ((numberp font-lock-studio-anchored-state)
+                    (when (>= font-lock-studio-anchored-state (- len 3))
+                      (setq font-lock-studio-anchored-state :matcher))
+                    nil)
+                   (t
+                    (error "Unexpected anchor state")))))))
+
+
+;; For example, this may set :pre state even if there is no
+;; PRE-MATCH-FORM in the highlight.
+(defun font-lock-studio-fontify-set-next-anchored-state0
+    (matched base-highlight)
+  "Set next anchored state, new state might not correspond to existing part.
+
+See `font-lock-studio-fontify-set-next-anchored-state' for details."
+  (cond ((null font-lock-studio-anchored-state)
+         ;; Set default anchored search limite. This is used when
+         ;; there is no :pre form or when it is skipped.
+         (setq font-lock-studio-anchored-limit
+               (let ((p font-lock-studio-point))
+                 (with-current-buffer font-lock-studio-buffer
+                   (save-excursion
+                     (goto-char p)
+                     (line-end-position)))))
+         (setq font-lock-studio-anchored-state :pre))
+        ((eq font-lock-studio-anchored-state :pre)
+         (setq font-lock-studio-keyword-match-data-saved
+               font-lock-studio-keyword-match-data)
+         (setq font-lock-studio-anchored-state :matcher))
+        ((eq font-lock-studio-anchored-state :matcher)
+         (if matched
+             (setq font-lock-studio-anchored-state 0)
+           (setq font-lock-studio-keyword-match-data
+                 font-lock-studio-keyword-match-data-saved)
+           (setq font-lock-studio-keyword-match-data-saved nil)
+           (setq font-lock-studio-anchored-state :post)))
+        ((eq font-lock-studio-anchored-state :post)
+         (font-lock-studio-fontify-set-next-highlight))
+        ((numberp font-lock-studio-anchored-state)
+         (setq font-lock-studio-anchored-state
+               (+ 1 font-lock-studio-anchored-state)))
+        (t
+         (error "Not in anchored rule"))))
 
 
 ;; --------------------

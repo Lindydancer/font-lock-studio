@@ -36,6 +36,10 @@
 
 ;;; Code:
 
+;; Note: The words "explain" and "explainer" exist both in the
+;; vocabulary of `ert' and of `font-lock-studio', they do not mean the
+;; same thing.
+
 (require 'faceup)
 
 
@@ -331,6 +335,21 @@ defined in C.")
               (mapcar 'font-lock-studio-test-log-position (match-data)))
         font-lock-studio-test-log-list))
 
+(defun font-lock-studio-test-log-print (log)
+  (dolist (entry (reverse log))
+    (princ (format "%-22s %5d %s\n"
+                   (nth 0 entry) (nth 1 entry) (nth 2 entry)))))
+
+(defvar font-lock-studio-test-log-bogus-match-data-seed nil)
+
+(defun font-lock-studio-test-log-generate-bogus-match-data ()
+  (set-match-data
+   (append (match-data)
+           (list font-lock-studio-test-log-bogus-match-data-seed
+                 (+ font-lock-studio-test-log-bogus-match-data-seed 1))))
+  (setq font-lock-studio-test-log-bogus-match-data-seed
+        (+ font-lock-studio-test-log-bogus-match-data-seed 2)))
+
 
 (defun font-lock-studio-test-log-mode-pattern1 (limit)
   (prog1
@@ -342,31 +361,45 @@ defined in C.")
     (font-lock-studio-test-log-mode-pattern1
      (0 (progn
           (font-lock-studio-test-log 'rule-0-face-form)
+          (font-lock-studio-test-log-generate-bogus-match-data)
           'font-lock-keyword-face)))
-    ;; TODO: The rest, from here...
     ("xxx\\(yyy\\)\\(zzz\\)"
      (1 font-lock-keyword-face)
      ("t\\(a\\)\\(i\\)\\(l\\)"
       (progn
         (font-lock-studio-test-log 'rule-1-pre-form)
+        (font-lock-studio-test-log-generate-bogus-match-data)
         nil)
-      (font-lock-studio-test-log 'rule-1-post-form)
-      (1 font-lock-warning-face)
+      (progn
+        (font-lock-studio-test-log 'rule-1-post-form)
+        (font-lock-studio-test-log-generate-bogus-match-data))
+      (1 (progn
+           (font-lock-studio-test-log 'rule-1-face-name-form)
+           font-lock-warning-face))
       (2 font-lock-constant-face)
-      (3 font-lock-function-name-face))
+      (3 (progn
+           font-lock-function-name-face)))
      ("s\\(v\\)\\(a\\)\\(n\\)\\(s\\)"
       (progn
         (font-lock-studio-test-log 'rule-2-pre-form)
+        (font-lock-studio-test-log-generate-bogus-match-data)
         nil)
-      (font-lock-studio-test-log 'rule-2-post-form)
+      (progn
+        (font-lock-studio-test-log 'rule-2-post-form)
+        (font-lock-studio-test-log-generate-bogus-match-data))
       (1 font-lock-warning-face)
       (2 font-lock-constant-face)
       (3 font-lock-function-name-face)
       (4 (progn
            (font-lock-studio-test-log 'rule-2-3-face-form)
+           (font-lock-studio-test-log-generate-bogus-match-data)
            'font-lock-keyword-face)))
-     (2 font-lock-type-face))
-    ((lambda (limit) (font-lock-studio-test-log 'rule-3-matcher) nil)
+;     (2 font-lock-type-face)
+     )
+    ((lambda (limit)
+       (font-lock-studio-test-log 'rule-3-matcher)
+       (font-lock-studio-test-log-generate-bogus-match-data)
+       nil)
      (0 font-lock-type-face))))
 
 (define-derived-mode font-lock-studio-test-log-mode fundamental-mode
@@ -386,12 +419,14 @@ defined in C.")
         (log2x nil))
     (let ((result-font-lock
            (with-current-buffer buffer
+             (setq font-lock-studio-test-log-bogus-match-data-seed 0)
              (setq font-lock-studio-test-log-list nil)
              (font-lock-fontify-region (point-min) (point-max))
              (setq log1 font-lock-studio-test-log-list)
              (faceup-markup-buffer)))
           (result-studio
            (progn
+             (setq font-lock-studio-test-log-bogus-match-data-seed 0)
              (setq font-lock-studio-test-log-list nil)
              (prog1
                (font-lock-studio-fontify
@@ -402,10 +437,17 @@ defined in C.")
             (if (eq res t)
                 (setq res (ert--explain-equal log1 log2)))
           (setq res (and (equal log1 log2))))
-        (if (interactive-p)
-            (message (if res
-                         "Results are equal"
-                       "Results are NOT equal")))
+        (when (interactive-p)
+          (message (if res
+                       "Results are equal"
+                     "Results are NOT equal"))
+          (unless res
+            (with-output-to-temp-buffer "*FLST Log*"
+              (princ "Font Lock:\n")
+              (font-lock-studio-test-log-print log1)
+              (princ "\n\nFont Lock Studio:\n")
+              (font-lock-studio-test-log-print log2)
+              (pop-to-buffer standard-output))))
         res))))
 
 (faceup-defexplainer font-lock-studio-test-font-lock-vs-studio-with-log)
@@ -451,6 +493,12 @@ defined in C.")
   (setq font-lock-defaults '(font-lock-studio-test-explainer-keywords))
   )
 
+(defun font-lock-studio-test-explain-current-state ()
+  (let ((state (font-lock-studio-fontify-get-current-state)))
+    (if state
+        (font-lock-studio-explain-state state)
+      nil)))
+
 (defun font-lock-studio-test-explainer ()
   (interactive)
   (with-temp-buffer
@@ -458,29 +506,29 @@ defined in C.")
     (font-lock-set-defaults)
     (insert "allan\n")
     (font-lock-studio-fontify-start)
-    (should (equal (font-lock-studio-explain-current-state)
+    (should (equal (font-lock-studio-test-explain-current-state)
                    "Keyword with regexp matcher"))
     ;; Match "allan"
     (should (font-lock-studio-fontify-match-current-keyword))
-    (should (equal (font-lock-studio-explain-current-state)
+    (should (equal (font-lock-studio-test-explain-current-state)
                    "Highlight: `font-lock-type-face' face."))
     (should (font-lock-studio-fontify-set-next-highlight))
     (should
      (equal
-      (font-lock-studio-explain-current-state)
+      (font-lock-studio-test-explain-current-state)
       "Highlight: Face `font-lock-keyword-face' \
 \(via variable `font-lock-keyword-face')."))
     (should (font-lock-studio-fontify-set-next-highlight))
     (should
      (equal
-      (font-lock-studio-explain-current-state)
+      (font-lock-studio-test-explain-current-state)
       "Highlight: Face should come from variable `an-unbound-variable', \
 which is unbound (missing quote?)."))
     (should (font-lock-studio-fontify-set-next-keyword))
-    (should (equal (font-lock-studio-explain-current-state)
+    (should (equal (font-lock-studio-test-explain-current-state)
                    "Keyword with function name matcher"))
     (should (font-lock-studio-fontify-set-next-keyword))
-    (should (equal (font-lock-studio-explain-current-state)
+    (should (equal (font-lock-studio-test-explain-current-state)
                    "Keyword with code-based matcher"))
     ))
 

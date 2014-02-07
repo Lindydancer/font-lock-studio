@@ -1,7 +1,7 @@
 # font-lock-studio - interactive debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.1<br>
+*Version:* 0.0.2<br>
 
 *Font Lock Studio* is an *interactive debugger* for Font Lock
 keywords (Emacs syntax highlighting rules).
@@ -102,7 +102,7 @@ Press space to single step through all the keywords. "n" will go
 the the next keyword, "b" will set a breakpoint, "g" will run to
 the end (or to the next breakpoint) and "q" will quit.
 
-In the following screen shot, you will see the debugger in action.
+In the following screenshot, you will see the debugger in action.
 The user has stepped into the last rule (for the second out of
 three times) -- the matches are visualized in the regexp, in the
 source buffer and in the highlight rule. In addition, *auto
@@ -110,7 +110,7 @@ explainer* is active so the rule is described in english.
 Furthermore, the red text means a *breakpoint* is set, in this case
 on a highlight rule, which is part of a Font Lock keyword rule.
 
-![See doc/demo.png for screen shor of Font Lock Studio](doc/demo.png)
+![See doc/demo.png for screenshot of Font Lock Studio](doc/demo.png)
 
 ## Features
 
@@ -229,4 +229,4 @@ to matches, they must be located. This requires a non-trivial
 
 
 ---
-Converted from `font-lock-studio.el` by *el2markup*.
+Converted from `font-lock-studio.el` by [*el2markup*](https://github.com/Lindydancer/el2markdown).
