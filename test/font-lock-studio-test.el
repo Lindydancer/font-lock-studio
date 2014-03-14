@@ -28,7 +28,9 @@
 ;; `font-lock'-specific extensions to `ert'. You can download `faceup'
 ;; from `https://github.com/Lindydancer/faceup'.
 ;;
-;; The tests in this modue range from unit test of specific functions to 
+;; The tests in this modue range from unit test of specific functions
+;; to back-to-back tests between font-lock-studio and the real
+;; font-lock of real-world source code.
 ;;
 ;; In addition to `ert' tests, this module provides a number of
 ;; fictitious major modes, tailor-mode to test different aspected of
@@ -337,8 +339,11 @@ defined in C.")
 
 (defun font-lock-studio-test-log-print (log)
   (dolist (entry (reverse log))
-    (princ (format "%-22s %5d %s\n"
-                   (nth 0 entry) (nth 1 entry) (nth 2 entry)))))
+    (if (eq (length entry) 3)
+        (princ (format "%-22s %5d %s\n"
+                       (nth 0 entry) (nth 1 entry) (nth 2 entry)))
+      ;; Some other kind of log...
+      (princ entry))))
 
 (defvar font-lock-studio-test-log-bogus-match-data-seed nil)
 
@@ -415,10 +420,11 @@ defined in C.")
   (interactive)
   (unless buffer
     (setq buffer (current-buffer)))
-  (let ((log1x nil)
-        (log2x nil))
+  (let ((log1 nil)
+        (log2 nil))
     (let ((result-font-lock
            (with-current-buffer buffer
+             (set-match-data '(0 0))
              (setq font-lock-studio-test-log-bogus-match-data-seed 0)
              (setq font-lock-studio-test-log-list nil)
              (font-lock-fontify-region (point-min) (point-max))
@@ -426,6 +432,7 @@ defined in C.")
              (faceup-markup-buffer)))
           (result-studio
            (progn
+             (set-match-data '(0 0))
              (setq font-lock-studio-test-log-bogus-match-data-seed 0)
              (setq font-lock-studio-test-log-list nil)
              (prog1
@@ -596,6 +603,45 @@ which is unbound (missing quote?)."))
   "Major mode for testing identical keywords."
   (setq font-lock-defaults '(font-lock-studio-test-identical-keywords)))
 
+
+;; ----------------------------------------
+;; No progress.
+;;
+
+(defun font-lock-studio-test-no-progress-matcher (limit)
+  (let ((p (point))
+        (res (re-search-forward "#*.*$" limit t)))
+    (push (list (cons :point-befor p)
+                (cons :point-after (point))
+                (cons :limit limit)
+                (cons :result res))
+          font-lock-studio-test-log-list)
+    res))
+
+(defvar font-lock-studio-test-no-progress-keywords
+  '((font-lock-studio-test-no-progress-matcher
+     (0 'font-lock-warning-face append))))
+
+(define-derived-mode font-lock-studio-test-no-progress-keywords-mode
+  fundamental-mode
+  "Font-Lock-Studio-Test-No-Progress"
+  "Major mode for testing keywords that don't move point forward."
+  (setq font-lock-defaults '(font-lock-studio-test-no-progress-keywords)))
+
+
+(defun font-lock-studio-test-no-progress-example ()
+  (with-temp-buffer
+    (font-lock-studio-test-no-progress-keywords-mode)
+    (insert "# alpha\n")
+    (insert "\n")
+    (insert "# beta\n")
+    (font-lock-studio-test-font-lock-vs-studio-with-log)))
+
+(faceup-defexplainer font-lock-studio-test-no-progress-example)
+
+
+(ert-deftest font-lock-studio-test-no-progress-example ()
+  (should (font-lock-studio-test-no-progress-example)))
 
 ;; ------------------------------------------------------------
 ;; The end

@@ -5,7 +5,8 @@
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.2
+;; Version: 0.0.3
+;; URL: https://github.com/Lindydancer/font-lock-studio
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -2502,7 +2503,7 @@ Update state and return non-nil if found."
          (res (font-lock-studio-fontify-match-matcher
                matcher
                ;; Limit
-               (cdr font-lock-studio-region))))
+               (marker-position (cdr font-lock-studio-region)))))
     (when res
       (font-lock-studio-fontify-set-highlight 0 (cdr kw)))
     res))
@@ -2512,25 +2513,32 @@ Update state and return non-nil if found."
   "Search for MATCHER. See `font-lock-keywords' for details.
 
 LIMIT is the search limit."
-  (let ((p font-lock-studio-point)
-        (case-fold-search font-lock-studio-case-fold-search))
-    (let ((res
-           (with-current-buffer font-lock-studio-buffer
-             ;; Note: Don't set studio buffer local variables here.
-             (with-syntax-table (or font-lock-syntax-table (syntax-table))
-               (goto-char p)
-               (if (if (stringp matcher)
-                       (re-search-forward matcher limit t)
-                     (font-lock-studio-save-buffer-state
-                       (funcall matcher limit)))
-                   (progn
-                  (setq p (point))
-                  t)
-                 nil)))))
-      (if res
-          (setq font-lock-studio-keyword-match-data (match-data)))
-      (setq font-lock-studio-point p)
-      res)))
+  (if (eq font-lock-studio-point limit)
+      nil
+    (let ((p font-lock-studio-point)
+          (case-fold-search font-lock-studio-case-fold-search))
+      (let ((res
+             (with-current-buffer font-lock-studio-buffer
+               ;; Note: Don't set studio buffer local variables here.
+               (with-syntax-table (or font-lock-syntax-table (syntax-table))
+                 (goto-char p)
+                 (if (if (stringp matcher)
+                         (re-search-forward matcher limit t)
+                       (font-lock-studio-save-buffer-state
+                         (funcall matcher limit)))
+                     (progn
+                       (setq p (point))
+                       t)
+                   nil)))))
+        (when res
+          (setq font-lock-studio-keyword-match-data (match-data))
+          ;; Move point at least one character forward but not beyond
+          ;; limit.
+          (if (and (eq p font-lock-studio-point)
+                   (not (eq p (point-max))))
+              (setq p (+ p 1))))
+        (setq font-lock-studio-point p)
+        res))))
 
 
 (defun font-lock-studio-fontify-get-base-highlight (&optional debug)

@@ -1,7 +1,8 @@
 # font-lock-studio - interactive debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.2<br>
+*Version:* 0.0.3<br>
+*URL:* [https://github.com/Lindydancer/font-lock-studio](https://github.com/Lindydancer/font-lock-studio)<br>
 
 *Font Lock Studio* is an *interactive debugger* for Font Lock
 keywords (Emacs syntax highlighting rules).
@@ -127,7 +128,7 @@ You can set breakpoints on part of the keyword, like the matcher
 rule.
 
 If you want to step or run without stopping on breakpoints, prefix
-the command with `C-u`.
+the command with <kbd>C-u</kbd>.
 
 Note that in an anchored rule, you can set a breakpoints either on
 the entire rule or on an individual part. In the former case, only
@@ -146,7 +147,7 @@ Note that an inner match group gets precedence over an outer group.
 This can lead to situations where a highlight rule gets a color
 that doesn't appear in the regexp or in the source buffer. For
 example, the matcher "\\(abc\\)" will be colored with the color for
-match 1, while the higlight rule `(0 a-face)' gets the color for
+match 1, while the higlight rule `(0 a-face)` gets the color for
 match 0.
 
 ### Normalized keywords
@@ -194,10 +195,10 @@ doesn't return -- Emacs hangs and all you can do is to kill it and
 restart. (I know from personal experience that it's not uncommon
 for functions that parse text to hang -- for example, when you have
 forgetten to check for the end-of-buffer.) When using font-lock
-studio, you can simply press `C-q` to exit.
+studio, you can simply press <kbd>C-q</kbd> to exit.
 
 If you have a source file that hangs Emacs when loaded, first
-disable font-lock using `M-x global-font-lock-mode RET' before
+disable font-lock using <kbd>M-x global-font-lock-mode RET</kbd> before
 loading the file, and finally launch Font-Lock studio.
 
 ### `cc-mode` keywords
@@ -207,7 +208,7 @@ The keywords provided by major modes like `c-mode`, `objc-mode`,
 font-lock keywords, which are unreadable and undebugable. To use
 corresponding keywords with *uncompiled* code, copy the file
 `cc-fonts.el`, replace explicit calls to `byte-compile` with `eval`
-and issue `M-x eval-buffer RET'.
+and issue <kbd>M-x eval-buffer RET</kbd>.
 
 ## Implementation overview
 
