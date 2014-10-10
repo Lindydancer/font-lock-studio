@@ -1,7 +1,7 @@
 # font-lock-studio - interactive debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.3<br>
+*Version:* 0.0.4<br>
 *URL:* [https://github.com/Lindydancer/font-lock-studio](https://github.com/Lindydancer/font-lock-studio)<br>
 
 *Font Lock Studio* is an *interactive debugger* for Font Lock
@@ -26,14 +26,16 @@ When Font Lock Studio is started, comments and strings are
 pre-colored, as they are part of the earlier *syntactic phase*
 (which isn't supported by Font Lock Studio).
 
-Start the debugger by typing "M-x font-lock-studio RET". Press `?`
+Start the debugger by typing <kbd>M-x font-lock-studio RET</kbd>. Press `?`
 or see the menu for available commands.
 
 ### Supported Emacs Versions
 
-This package is primarily designed for Emacs 24. However, with the
-help of the companion package `andersl-old-emacs-support`, it can
-be used with earlier Emacs versions, at least from Emacs 22.
+This package is primarily for Emacs 24.3. However, with the help of
+the companion package [old-emacs-support][1] it can be used with
+earlier Emacs versions, at least from Emacs 22.
+
+[1]: https://github.com/Lindydancer/old-emacs-support
 
 ### Why use a debugger?
 
@@ -194,7 +196,7 @@ Traditionally, if you use a function as a matcher and that function
 doesn't return -- Emacs hangs and all you can do is to kill it and
 restart. (I know from personal experience that it's not uncommon
 for functions that parse text to hang -- for example, when you have
-forgetten to check for the end-of-buffer.) When using font-lock
+forgotten to check for the end-of-buffer.) When using font-lock
 studio, you can simply press <kbd>C-q</kbd> to exit.
 
 If you have a source file that hangs Emacs when loaded, first
@@ -230,4 +232,4 @@ to matches, they must be located. This requires a non-trivial
 
 
 ---
-Converted from `font-lock-studio.el` by [*el2markup*](https://github.com/Lindydancer/el2markdown).
+Converted from `font-lock-studio.el` by [*el2markdown*](https://github.com/Lindydancer/el2markdown).

@@ -1,12 +1,13 @@
-;;; font-lock-studio.el -- interactive debugger for Font Lock keywords.
+;;; font-lock-studio.el --- interactive debugger for Font Lock keywords.
 
 ;; Copyright (C) 2013-2014 Anders Lindgren
 
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.3
+;; Version: 0.0.4
 ;; URL: https://github.com/Lindydancer/font-lock-studio
+;; Package-Requires: ((old-emacs-support "0.0.2"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -45,14 +46,16 @@
 ;; pre-colored, as they are part of the earlier *syntactic phase*
 ;; (which isn't supported by Font Lock Studio).
 ;;
-;; Start the debugger by typing "M-x font-lock-studio RET". Press `?'
+;; Start the debugger by typing `M-x font-lock-studio RET'. Press `?'
 ;; or see the menu for available commands.
 ;;
 ;; Supported Emacs Versions:
 ;;
-;; This package is primarily designed for Emacs 24. However, with the
-;; help of the companion package `andersl-old-emacs-support', it can
-;; be used with earlier Emacs versions, at least from Emacs 22.
+;; This package is primarily for Emacs 24.3. However, with the help of
+;; the companion package [old-emacs-support][1] it can be used with
+;; earlier Emacs versions, at least from Emacs 22.
+;;
+;; [1]: https://github.com/Lindydancer/old-emacs-support
 ;;
 ;; Why use a debugger?:
 ;;
@@ -214,7 +217,7 @@
 ;; doesn't return -- Emacs hangs and all you can do is to kill it and
 ;; restart. (I know from personal experience that it's not uncommon
 ;; for functions that parse text to hang -- for example, when you have
-;; forgetten to check for the end-of-buffer.) When using font-lock
+;; forgotten to check for the end-of-buffer.) When using font-lock
 ;; studio, you can simply press `C-q' to exit.
 ;;
 ;; If you have a source file that hangs Emacs when loaded, first
@@ -334,11 +337,15 @@
 ;; Byte-compile support
 ;;
 
-(eval-and-compile
-  (require 'cl))
-
 (eval-when-compile
+  ;; Note, in modern Emacs version, cl-lib should be used. However,
+  ;; it's not available (without using extra packages) in older Emacs
+  ;; versions.
+  (require 'cl)                         ; For `assert'.
   (defvar follow-mode))
+
+;; Load backward compatibility package, if present.
+(require 'old-emacs-support nil t)
 
 (declare-function follow-post-command-hook "follow.el")
 (declare-function edebug-instrument-function "edebug.el")
@@ -609,6 +616,7 @@ directly in the interface buffer.")
 ;; ------------------------------------------------------------
 
 
+;;;###autoload
 (defun font-lock-studio (&optional arg)
   "Interactively debug the font-lock keywords of the current buffer.
 
@@ -617,6 +625,7 @@ With \\[universal-argument] prefix, create a new, unique, interface buffer."
   (font-lock-studio-region (point-min) (point-max) arg))
 
 
+;;;###autoload
 (defun font-lock-studio-region (beg end &optional arg)
   "Interactively debug the font-lock keywords in the region.
 
@@ -818,6 +827,26 @@ nil to ensure that indentation doesn't contain tab characters."
 
 (defvar font-lock-studio-insert-debug-overlay nil)
 
+;; Even though this package should work with old Emacs versions, the
+;; intention is that modern names should be used. In this case,
+;; however, the modern name is `cl-position' (from cl-lib) and the old
+;; `position' (from cl). Unfortunately, there is no way to write the
+;; code so that it works in both worlds, hence this function.
+
+(defun font-lock-studio-position (item seq)
+  "Find the first occurrence of ITEM in SEQ.
+Return the index of the matching item, or nil if not found."
+  (let ((count 0)
+        (len (length seq))
+        (res nil))
+    (while (< count len)
+      (if (eq item (aref seq count))
+          (progn
+            (setq res count)
+            (setq len 0))               ; Break the loop
+        (setq count (+ count 1))))
+    res))
+
 (defun font-lock-studio-insert (s)
   "Insert (or replace) text at point like `insert'.
 
@@ -826,7 +855,7 @@ to ensure that visible windows aren't redisplayed."
   (setq font-lock-studio-insert-accumulated
         (concat font-lock-studio-insert-accumulated s))
   (while (not (equal s ""))
-    (let* ((end-pos (position ?\n s))
+    (let* ((end-pos (font-lock-studio-position ?\n s))
            (line (if end-pos
                      (substring s 0 (+ end-pos 1))
                    s))
