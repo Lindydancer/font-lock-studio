@@ -5,9 +5,9 @@
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.4
+;; Version: 0.0.5
 ;; URL: https://github.com/Lindydancer/font-lock-studio
-;; Package-Requires: ((old-emacs-support "0.0.2"))
+;; Package-Requires: ((emacs "24.3"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -343,9 +343,6 @@
   ;; versions.
   (require 'cl)                         ; For `assert'.
   (defvar follow-mode))
-
-;; Load backward compatibility package, if present.
-(require 'old-emacs-support nil t)
 
 (declare-function follow-post-command-hook "follow.el")
 (declare-function edebug-instrument-function "edebug.el")
