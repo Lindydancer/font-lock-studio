@@ -5,7 +5,7 @@
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.5
+;; Version: 0.0.6
 ;; URL: https://github.com/Lindydancer/font-lock-studio
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -2918,6 +2918,7 @@ Converts:                   To:
 MATCHER                     (MATCHER (0 font-lock-keyword-face))
 \(MATCHER . SUBEXP)          (MATCHER (SUBEXP font-lock-keyword-face))
 \(MATCHER . FACENAME)        (MATCHER (0 FACENAME))
+\(MATCHER . 'FACENAME)       (MATCHER (0 'FACENAME))
 \(MATCHER . HIGHLIGHT)       (MATCHER HIGHLIGHT)"
   (let ((res '()))
     (dolist (kw keywords)
@@ -2930,6 +2931,9 @@ MATCHER                     (MATCHER (0 font-lock-keyword-face))
              (setq kw (list kw '(0 font-lock-keyword-face))))
             ((numberp (cdr kw))
              (setq kw (list (car kw) (list (cdr kw) 'font-lock-keyword-face))))
+            ((and (eq (car-safe (cdr kw)) 'quote)
+                  (symbolp (nth 2 kw)))
+             (setq kw (list (car kw) (list 0 (cdr kw)))))
             ((symbolp (cdr kw))
              (setq kw (list (car kw) (list 0 (cdr kw)))))
             ((not (consp (car (cdr kw))))
