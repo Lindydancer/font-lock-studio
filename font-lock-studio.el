@@ -1,11 +1,11 @@
 ;;; font-lock-studio.el --- interactive debugger for Font Lock keywords.
 
-;; Copyright (C) 2013-2014 Anders Lindgren
+;; Copyright (C) 2013-2017 Anders Lindgren
 
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.6
+;; Version: 0.0.7
 ;; URL: https://github.com/Lindydancer/font-lock-studio
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -24,19 +24,19 @@
 
 ;;; Commentary:
 
-;; *Font Lock Studio* is an *interactive debugger* for Font Lock
-;; keywords (Emacs syntax highlighting rules).
-
-;; Introduction:
+;; Interactive debugger for font-lock keywords (Emacs syntax
+;; highlighting rules).
 ;;
 ;; Font Lock Studio lets you *single-step* Font Lock keywords --
 ;; matchers, highlights, and anchored rules, so that you can see what
 ;; happens when a buffer is fontified. You can set *breakpoints* on or
 ;; inside rules and *run* until one has been hit. When inside a rule,
 ;; matches are *visualized* using a palette of background colors. The
-;; *explainer* can describe a rule in plain-text english. Tight
+;; *explainer* can describe a rule in plain-text English. Tight
 ;; integration with *Edebug* allows you to step into Lisp expressions
 ;; that are part of the Font Lock keywords.
+
+;; Usage:
 ;;
 ;; When using the debugger, an *interface buffer* is displayed, it
 ;; contains all the keywords and is used for navigation and
@@ -48,14 +48,6 @@
 ;;
 ;; Start the debugger by typing `M-x font-lock-studio RET'. Press `?'
 ;; or see the menu for available commands.
-;;
-;; Supported Emacs Versions:
-;;
-;; This package is primarily for Emacs 24.3. However, with the help of
-;; the companion package [old-emacs-support][1] it can be used with
-;; earlier Emacs versions, at least from Emacs 22.
-;;
-;; [1]: https://github.com/Lindydancer/old-emacs-support
 ;;
 ;; Why use a debugger?:
 ;;
@@ -250,6 +242,79 @@
 ;; In order for to visualize the groups in regexp:s that corresponds
 ;; to matches, they must be located. This requires a non-trivial
 ;; *regexp parser*.
+
+;; Other Font Lock Tools:
+;;
+;; This package is part of a suite of font-lock tools.  The other
+;; tools in the suite are:
+;;
+;;
+;; Font Lock Profiler:
+;;
+;; A profiler for font-lock keywords.  This package measures time and
+;; counts the number of times each part of a font-lock keyword is
+;; used.  For matchers, it counts the total number and the number of
+;; successful matches.
+;;
+;; The result is presented in table that can be sorted by count or
+;; time.  The table can be expanded to include each part of the
+;; font-lock keyword.
+;;
+;; In addition, this package can generate a log of all font-lock
+;; events.  This can be used to verify font-lock implementations,
+;; concretely, this is used for back-to-back tests of the real
+;; font-lock engine and Font Lock Studio, an interactive debugger for
+;; font-lock keywords.
+;;
+;;
+;; Highlight Refontification:
+;;
+;; Minor mode that visualizes how font-lock refontifies a buffer.
+;; This is useful when developing or debugging font-lock keywords,
+;; especially for keywords that span multiple lines.
+;;
+;; The background of the buffer is painted in a rainbow of colors,
+;; where each band in the rainbow represent a region of the buffer
+;; that has been refontified.  When the buffer is modified, the
+;; rainbow is updated.
+;;
+;;
+;; Faceup:
+;;
+;; Emacs is capable of highlighting buffers based on language-specific
+;; `font-lock' rules. This package makes it possible to perform
+;; regression test for packages that provide font-lock rules.
+;;
+;; The underlying idea is to convert text with highlights ("faces")
+;; into a plain text representation using the Faceup markup
+;; language. This language is semi-human readable, for example:
+;;
+;;     «k:this» is a keyword
+;;
+;; By comparing the current highlight with a highlight performed with
+;; stable versions of a package, it's possible to automatically find
+;; problems that otherwise would have been hard to spot.
+;;
+;; This package is designed to be used in conjunction with Ert, the
+;; standard Emacs regression test system.
+;;
+;; The Faceup markup language is a generic markup language, regression
+;; testing is merely one way to use it.
+;;
+;;
+;; Font Lock Regression Suite:
+;;
+;; A collection of example source files for a large number of
+;; programming languages, with ERT tests to ensure that syntax
+;; highlighting does not accidentally change.
+;;
+;; For each source file, font-lock reference files are provided for
+;; various Emacs versions.  The reference files contains a plain-text
+;; representation of source file with syntax highlighting, using the
+;; format "faceup".
+;;
+;; Of course, the collection source file can be used for other kinds
+;; of testing, not limited to font-lock regression testing.
 
 ;;; Code:
 
@@ -704,6 +769,7 @@ Used when restarting and when the interface buffer is killed."
   (define-key map "M" 'font-lock-studio-show-match-data)
 
   (define-key map "l" 'font-lock-studio-update-interface-buffer)
+  (define-key map "e" 'font-lock-studio-eval-in-source-buffer)
 
   (define-key map "m" 'font-lock-studio-step-keyword-match)
   (define-key map "n" 'font-lock-studio-next-keyword)
@@ -748,6 +814,7 @@ Used when restarting and when the interface buffer is killed."
     ["Run"                         font-lock-studio-run]
     ["Restart"                     font-lock-studio-restart]
     "----"
+    ["Eval in Source"              font-lock-studio-eval-in-source-buffer]
     ["Step Into and Debug"         font-lock-studio-step-into-and-debug]
     ["Instrument Matcher"          font-lock-studio-instrument-matcher]
     "----"
@@ -1063,13 +1130,18 @@ rule search limit is shown."
          "==================================================\n")
         (font-lock-studio-insert "Internal state:\n")
         (font-lock-studio-insert (format "  Keyword number         : %s\n"
-                        font-lock-studio-keyword-number))
+                                         font-lock-studio-keyword-number))
         (font-lock-studio-insert (format "  Highlight number       : %s\n"
-                        font-lock-studio-highlight-number))
+                                         font-lock-studio-highlight-number))
         (font-lock-studio-insert (format "  Anchored state         : %s\n"
-                        font-lock-studio-anchored-state))
+                                         font-lock-studio-anchored-state))
         (font-lock-studio-insert (format "  Anchored limit         : %s\n"
-                        font-lock-studio-anchored-limit))
+                                         font-lock-studio-anchored-limit))
+        (font-lock-studio-insert (format "  Point                  : %s\n"
+                                         (if (markerp font-lock-studio-point)
+                                             (marker-position
+                                              font-lock-studio-point)
+                                           font-lock-studio-point)))
         (font-lock-studio-insert (format "  Edebug expression point: %s\n"
                         font-lock-studio-edebug-expression-point))
         (font-lock-studio-insert "  Match data             :\n")
@@ -1499,18 +1571,22 @@ Return list of (GROUP BEG END)."
       (let ((group (nth 0 r))
             (beg   (nth 1 r))
             (end   (nth 2 r)))
-        (let ((overlay (make-overlay
-                        beg
-                        end
-                        font-lock-studio-buffer)))
-          (overlay-put
-           overlay
-           'face
-           (list :background
-                 (nth (mod group
-                           (length font-lock-studio-color-list))
-                      font-lock-studio-color-list)))
-          (push overlay font-lock-studio-overlays))))))
+        (when (and (or (not (markerp beg))
+                       (eq (marker-buffer beg) font-lock-studio-buffer))
+                   (or (not (markerp end))
+                       (eq (marker-buffer end) font-lock-studio-buffer)))
+          (let ((overlay (make-overlay
+                          beg
+                          end
+                          font-lock-studio-buffer)))
+            (overlay-put
+             overlay
+             'face
+             (list :background
+                   (nth (mod group
+                             (length font-lock-studio-color-list))
+                        font-lock-studio-color-list)))
+            (push overlay font-lock-studio-overlays)))))))
 
 
 (defun font-lock-studio-visualize-regexp (regexp md &optional all)
@@ -2240,6 +2316,18 @@ Font Lock Studio."
 ;; Support functions
 ;;
 
+(defun font-lock-studio-eval-in-source-buffer (expr)
+  "Evaluate an expression in the source buffer.
+If interactive, prompt for the expression.
+Print result in minibuffer."
+  (interactive (list (read-from-minibuffer
+		      "Eval: " nil read-expression-map t
+		      'read-expression-history)))
+  (with-current-buffer font-lock-studio-buffer
+    (let ((print-escape-newlines t))
+      (princ (eval expr)))))
+
+
 (defun font-lock-studio-instrument-matcher ()
   "Instrument matcher function symbol, so that it can be debugged in Edebug."
   (interactive)
@@ -2535,7 +2623,8 @@ Update state and return non-nil if found."
     res))
 
 
-(defun font-lock-studio-fontify-match-matcher (matcher &optional limit)
+(defun font-lock-studio-fontify-match-matcher (matcher &optional limit
+                                                       dont-move-forward)
   "Search for MATCHER. See `font-lock-keywords' for details.
 
 LIMIT is the search limit."
@@ -2558,11 +2647,11 @@ LIMIT is the search limit."
                    nil)))))
         (when res
           (setq font-lock-studio-keyword-match-data (match-data))
-          ;; Move point at least one character forward but not beyond
-          ;; limit.
-          (if (and (eq p font-lock-studio-point)
-                   (not (eq p (point-max))))
-              (setq p (+ p 1))))
+          ;; Font-lock tries to avoid potential problems with matchers
+          ;; that don't match anything.
+          (unless dont-move-forward
+            (unless (> p (match-beginning 0))
+              (setq p (+ p 1)))))
         (setq font-lock-studio-point p)
         res))))
 
@@ -2672,9 +2761,15 @@ of the current keyword."
 (defun font-lock-studio-fontify-highlight (highlight)
   "Fontify HIGHLIGHT is the source buffer."
   (set-match-data font-lock-studio-keyword-match-data)
-  (with-current-buffer font-lock-studio-buffer
-    (font-lock-studio-save-buffer-state
-      (font-lock-apply-highlight highlight)))
+  (let ((p font-lock-studio-point))
+    (with-current-buffer font-lock-studio-buffer
+      (goto-char p)
+      (font-lock-studio-save-buffer-state
+        (font-lock-apply-highlight highlight))))
+  ;; Ensure that point movements performed by the FACE expression
+  ;; are preserved.
+  (setq font-lock-studio-point (with-current-buffer font-lock-studio-buffer
+                                 (point)))
   (setq font-lock-studio-keyword-match-data (match-data)))
 
 
@@ -2739,7 +2834,8 @@ Return nil when no match was found."
                              font-lock-studio-edebug-expression-point)
                         (font-lock-studio-fontify-read-edebug-expression)
                       (nth 0 highlight))
-                    font-lock-studio-anchored-limit)))
+                    font-lock-studio-anchored-limit
+                    'dont-move-point)))
       (font-lock-studio-fontify-set-next-anchored-state matched)
       matched)))
 
@@ -2810,7 +2906,7 @@ If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
 
 See `font-lock-studio-fontify-set-next-anchored-state' for details."
   (cond ((null font-lock-studio-anchored-state)
-         ;; Set default anchored search limite. This is used when
+         ;; Set default anchored search limit. This is used when
          ;; there is no :pre form or when it is skipped.
          (setq font-lock-studio-anchored-limit
                (let ((p font-lock-studio-point))
