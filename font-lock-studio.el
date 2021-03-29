@@ -403,10 +403,7 @@
 ;;
 
 (eval-when-compile
-  ;; Note, in modern Emacs version, cl-lib should be used. However,
-  ;; it's not available (without using extra packages) in older Emacs
-  ;; versions.
-  (require 'cl)                         ; For `assert'.
+  (require 'cl-lib) ; For `assert'.
   (defvar follow-mode))
 
 (declare-function follow-post-command-hook "follow.el")
@@ -1163,8 +1160,8 @@ rule search limit is shown."
       ;; --------------------
       ;; Remove any remaining text of the original buffer.
       (delete-region (point) (point-max))
-      (assert (equal font-lock-studio-insert-accumulated
-                     (buffer-substring (point-min) (point-max))))
+      (cl-assert (equal font-lock-studio-insert-accumulated
+                        (buffer-substring (point-min) (point-max))))
       ;; --------------------
       ;; Move point and draw the fringe arrow in interface buffer.
       (goto-char p)
@@ -1437,7 +1434,7 @@ Return a string suitable to be applied to `message'."
 Return a list of sentences.
 
 See `font-lock-keywords' for details."
-  (assert (numberp (car highlight)))
+  (cl-assert (numberp (car highlight)))
   (with-current-buffer font-lock-studio-buffer
     (let ((face (nth 1 highlight)))
       (cond ((symbolp face)
@@ -1601,7 +1598,7 @@ ALL is non-nil. The group is colored according
         (prx (font-lock-studio-with-clean-output-to-string
               (prin1 regexp))))
     ;; Note: `equal' ignored text properties.
-    (assert (equal prx res))
+    (cl-assert (equal prx res))
     res))
 
 
@@ -2347,7 +2344,7 @@ Print result in minibuffer."
                          font-lock-studio-keywords)))
             (setq matcher (car kw))))
       (user-error "No font-lock keyword active"))
-    (assert matcher)
+    (cl-assert matcher)
     (if (symbolp matcher)
         (edebug-instrument-function matcher)
       (user-error "Matcher is not function symbol"))))
@@ -2607,7 +2604,7 @@ Return nil if there is no such keyword."
 (defun font-lock-studio-fontify-match-current-keyword ()
   "Search for occurrences described by MATCHER.
 Update state and return non-nil if found."
-  (assert (eq font-lock-studio-highlight-number nil))
+  (cl-assert (eq font-lock-studio-highlight-number nil))
   (let* ((kw (nth font-lock-studio-keyword-number
                   font-lock-studio-keywords))
          (matcher (if (and font-lock-studio-edebug-active
@@ -2672,7 +2669,7 @@ expression is replaced with one that is instrumented by Edebug."
   "The current anchored highlight.
 
 See `font-lock-studio-fontify-maybe-instrument-highlight' for DEBUG."
-  (assert (numberp font-lock-studio-anchored-state))
+  (cl-assert (numberp font-lock-studio-anchored-state))
   (let* ((base-highlight (font-lock-studio-fontify-get-base-highlight))
          ;; Skip MATCHER, PRE-MATCH-FORM, and POST-MATCH-FORM.
          (highlight-list (nthcdr 3 base-highlight))
@@ -2723,10 +2720,10 @@ interface buffer itself."
 (defun font-lock-studio-fontify-current-highlight ()
   "Fontify current highlight.
 Return nil if there are no more highlights."
-  (assert font-lock-studio-highlight-number)
+  (cl-assert font-lock-studio-highlight-number)
   (let ((highlight (font-lock-studio-fontify-get-base-highlight :instrument)))
     (set-match-data font-lock-studio-keyword-match-data)
-    (assert (numberp (car highlight)))
+    (cl-assert (numberp (car highlight)))
     (font-lock-studio-fontify-highlight highlight)
     (font-lock-studio-fontify-set-next-highlight)))
 
@@ -2778,7 +2775,7 @@ of the current keyword."
 
 (defun font-lock-studio-fontify-do-anchored-pre-match-form ()
   "Run the pre-match form of an anchored highlight rule."
-  (assert (eq font-lock-studio-anchored-state :pre))
+  (cl-assert (eq font-lock-studio-anchored-state :pre))
   (let* ((p font-lock-studio-point)
          (highlight (font-lock-studio-fontify-get-base-highlight))
          (expr (if (and font-lock-studio-edebug-active
@@ -2806,7 +2803,7 @@ of the current keyword."
 
 (defun font-lock-studio-fontify-do-anchored-post-match-form ()
   "Run the post-match form of an anchored highlight rule."
-  (assert (eq font-lock-studio-anchored-state :post))
+  (cl-assert (eq font-lock-studio-anchored-state :post))
   (let* ((p font-lock-studio-point)
          (highlight (font-lock-studio-fontify-get-base-highlight))
          (expr (if (and font-lock-studio-edebug-active
@@ -2826,7 +2823,7 @@ of the current keyword."
 (defun font-lock-studio-fontify-match-anchored-matcher ()
   "Search for MATCHER in current anchored highlight rule.
 Return nil when no match was found."
-  (assert (eq font-lock-studio-anchored-state :matcher))
+  (cl-assert (eq font-lock-studio-anchored-state :matcher))
   (let ((highlight (font-lock-studio-fontify-get-base-highlight)))
     (set-match-data font-lock-studio-keyword-match-data)
     (let ((matched (font-lock-studio-fontify-match-matcher
@@ -2842,7 +2839,7 @@ Return nil when no match was found."
 
 (defun font-lock-studio-fontify-current-anchored-highlight ()
   "Fontify current highlight in an anchored rule."
-  (assert (numberp font-lock-studio-anchored-state))
+  (cl-assert (numberp font-lock-studio-anchored-state))
   (font-lock-studio-fontify-highlight
    (font-lock-studio-fontify-get-anchored-highlight :instrument))
   (font-lock-studio-fontify-set-next-anchored-state))
@@ -2877,7 +2874,7 @@ MATCHED is non-nil.
 If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
   (unless base-highlight
     (setq base-highlight (font-lock-studio-fontify-get-base-highlight)))
-  (assert (not (numberp base-highlight)))
+  (cl-assert (not (numberp base-highlight)))
   (let ((len (length base-highlight)))
     (while (progn
              (font-lock-studio-fontify-set-next-anchored-state0
