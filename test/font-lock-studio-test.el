@@ -43,6 +43,11 @@
 ;; same thing.
 
 (require 'faceup)
+
+(unless (require 'tabulated-list nil t)
+  (defvar tabulated-list-mode-map (copy-keymap special-mode-map))
+  (provide 'tabulated-list))
+
 (require 'font-lock-profiler)
 
 
@@ -323,7 +328,7 @@ is echoed and, if the comparison failed, the log is displayed."
                   (setq res (ert--explain-equal log-real log-studio)))
             (setq res (and res (equal log-real log-studio))))
           (when verbose
-            (assert (not faceup-test-explain))
+            (font-lock-sudio-assert (not faceup-test-explain))
             (message (if res
                          "Results are equal"
                        "Results are NOT equal"))

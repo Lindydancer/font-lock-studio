@@ -22,7 +22,8 @@
       (file-name-directory load-file-name)
     default-directory))
 
-(dolist (dir '("." ".." "../../faceup" "../../../lisp"))
+(dolist (dir '("." ".."
+               "../../faceup" "../../font-lock-profiler" "../../../lisp"))
   (add-to-list 'load-path
                (expand-file-name dir font-lock-studio-test-setup-directory)))
 

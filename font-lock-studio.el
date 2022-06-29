@@ -5,7 +5,7 @@
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.7
+;; Version: 0.0.8
 ;; URL: https://github.com/Lindydancer/font-lock-studio
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -29,12 +29,12 @@
 ;;
 ;; Font Lock Studio lets you *single-step* Font Lock keywords --
 ;; matchers, highlights, and anchored rules, so that you can see what
-;; happens when a buffer is fontified. You can set *breakpoints* on or
-;; inside rules and *run* until one has been hit. When inside a rule,
-;; matches are *visualized* using a palette of background colors. The
-;; *explainer* can describe a rule in plain-text English. Tight
-;; integration with *Edebug* allows you to step into Lisp expressions
-;; that are part of the Font Lock keywords.
+;; happens when a buffer is fontified.  You can set *breakpoints* on
+;; or inside rules and *run* until one has been hit.  When inside a
+;; rule, matches are *visualized* using a palette of background
+;; colors.  The *explainer* can describe a rule in plain-text English.
+;; Tight integration with *Edebug* allows you to step into Lisp
+;; expressions that are part of the Font Lock keywords.
 
 ;; Usage:
 ;;
@@ -46,7 +46,7 @@
 ;; pre-colored, as they are part of the earlier *syntactic phase*
 ;; (which isn't supported by Font Lock Studio).
 ;;
-;; Start the debugger by typing `M-x font-lock-studio RET'. Press `?'
+;; Start the debugger by typing `M-x font-lock-studio RET'.  Press `?'
 ;; or see the menu for available commands.
 ;;
 ;; Why use a debugger?:
@@ -58,7 +58,7 @@
 ;;
 ;; Regardless of your background and ambition, there is a world of
 ;; difference between simply reading Font Lock keywords and being able
-;; to step through the rules and exactly see what they do. In fact, as
+;; to step through the rules and exactly see what they do.  In fact, as
 ;; part of writing Font Lock Studio, I learned some new Font Lock
 ;; tricks from various major modes -- despite having 15+ years of
 ;; experience with Font Lock.
@@ -66,8 +66,8 @@
 ;; Example:
 ;;
 ;; For a buffer using `html-mode', the interface buffer looks the
-;; following. Other major modes typically have more and more complex
-;; rules. The arrow on the left indicates the current active location.
+;; following.  Other major modes typically have more and more complex
+;; rules.  The arrow on the left indicates the current active location.
 ;; A corresponding arrow in the source buffer is placed at the current
 ;; search location.
 ;;
@@ -114,14 +114,14 @@
 ;;           Explain rules      : YES
 ;;           Show compiled code : NO
 ;;
-;; Press space to single step through all the keywords. "n" will go
+;; Press space to single step through all the keywords.  "n" will go
 ;; the the next keyword, "b" will set a breakpoint, "g" will run to
 ;; the end (or to the next breakpoint) and "q" will quit.
 ;;
 ;; In the following screenshot, you will see the debugger in action.
 ;; The user has stepped into the last rule (for the second out of
 ;; three times) -- the matches are visualized in the regexp, in the
-;; source buffer and in the highlight rule. In addition, *auto
+;; source buffer and in the highlight rule.  In addition, *auto
 ;; explainer* is active so the rule is described in english.
 ;; Furthermore, the red text means a *breakpoint* is set, in this case
 ;; on a highlight rule, which is part of a Font Lock keyword rule.
@@ -133,7 +133,7 @@
 ;; Stepping:
 ;;
 ;; You can single *step into*, *over*, and *out* of Font Lock
-;; keywords. *Anchored* rules are fully supported. In addition, you
+;; keywords.  *Anchored* rules are fully supported.  In addition, you
 ;; can *run* to the end or to the next breakpoint.
 ;;
 ;; Breakpoints:
@@ -146,7 +146,7 @@
 ;; the command with `C-u'.
 ;;
 ;; Note that in an anchored rule, you can set a breakpoints either on
-;; the entire rule or on an individual part. In the former case, only
+;; the entire rule or on an individual part.  In the former case, only
 ;; the outer parentheses are highlighted.
 ;;
 ;; Match Data Visualization:
@@ -154,20 +154,20 @@
 ;; After the *matcher* of a keyword or anchored highlight has been
 ;; executed, the match data (whatever the search found) is visualized
 ;; using background colors in the source buffer, in the regexp, and
-;; over the corresponding highlight rule or rules. If part of a regexp
+;; over the corresponding highlight rule or rules.  If part of a regexp
 ;; or a highlight didn't match, it is not colored, this can for
 ;; example happen when the postfix regexp operator `?' is used.
 ;;
 ;; Note that an inner match group gets precedence over an outer group.
 ;; This can lead to situations where a highlight rule gets a color
-;; that doesn't appear in the regexp or in the source buffer. For
+;; that doesn't appear in the regexp or in the source buffer.  For
 ;; example, the matcher "\\(abc\\)" will be colored with the color for
 ;; match 1, while the higlight rule `(0 a-face)' gets the color for
 ;; match 0.
 ;;
 ;; Normalized keywords:
 ;;
-;; The keywords presented in the interface have been normalized. For
+;; The keywords presented in the interface have been normalized.  For
 ;; example, instead of
 ;;
 ;;      ("xyz" . font-lock-type-face)
@@ -176,12 +176,12 @@
 ;;
 ;;       ("xyz" (0 font-lock-type-face))
 ;;
-;; is shown. See `font-lock-studio-normalize-keywords' for details.
+;; is shown.  See `font-lock-studio-normalize-keywords' for details.
 ;;
 ;; Explainer:
 ;;
 ;; The *explainer* echoes a human-readble description of the current
-;; part of the Font Lock keywords. This help you to understand that
+;; part of the Font Lock keywords.  This help you to understand that
 ;; all those `nil':s and `t':s in the rules actually mean.
 ;;
 ;; When using the *auto explainer*, Font Lock Studio echoes the
@@ -196,7 +196,7 @@
 ;; Follow mode awareness:
 ;;
 ;; The search location in the source buffer is visualized by an
-;; overlay arrow and by updating the point. If the source buffer is
+;; overlay arrow and by updating the point.  If the source buffer is
 ;; visible in multiple side-by-side windows and Follow mode is
 ;; enabled, the search location will be shown in a suitable windows to
 ;; minimize scrolling.
@@ -207,7 +207,7 @@
 ;;
 ;; Traditionally, if you use a function as a matcher and that function
 ;; doesn't return -- Emacs hangs and all you can do is to kill it and
-;; restart. (I know from personal experience that it's not uncommon
+;; restart.  (I know from personal experience that it's not uncommon
 ;; for functions that parse text to hang -- for example, when you have
 ;; forgotten to check for the end-of-buffer.) When using font-lock
 ;; studio, you can simply press `C-q' to exit.
@@ -220,7 +220,7 @@
 ;;
 ;; The keywords provided by major modes like `c-mode', `objc-mode',
 ;; `cpp-mode' that are based on `cc-mode' contain *byte-compiled*
-;; font-lock keywords, which are unreadable and undebugable. To use
+;; font-lock keywords, which are unreadable and undebugable.  To use
 ;; corresponding keywords with *uncompiled* code, copy the file
 ;; `cc-fonts.el', replace explicit calls to `byte-compile' with `eval'
 ;; and issue `M-x eval-buffer RET'.
@@ -231,7 +231,7 @@
 ;;
 ;; Font Lock Studio provides it's own fontification engine, designed
 ;; to for things needed by a debugger such as single-stepping and
-;; breakpoints. This fontification engine lacks a lot of features of
+;; breakpoints.  This fontification engine lacks a lot of features of
 ;; the real font-lock fontification engine, such as the speed and the
 ;; ability to refontify when the buffer is modified.
 ;;
@@ -240,7 +240,7 @@
 ;; Regexp decomposer:
 ;;
 ;; In order for to visualize the groups in regexp:s that corresponds
-;; to matches, they must be located. This requires a non-trivial
+;; to matches, they must be located.  This requires a non-trivial
 ;; *regexp parser*.
 
 ;; Other Font Lock Tools:
@@ -282,12 +282,12 @@
 ;; Faceup:
 ;;
 ;; Emacs is capable of highlighting buffers based on language-specific
-;; `font-lock' rules. This package makes it possible to perform
+;; `font-lock' rules.  This package makes it possible to perform
 ;; regression test for packages that provide font-lock rules.
 ;;
 ;; The underlying idea is to convert text with highlights ("faces")
 ;; into a plain text representation using the Faceup markup
-;; language. This language is semi-human readable, for example:
+;; language.  This language is semi-human readable, for example:
 ;;
 ;;     «k:this» is a keyword
 ;;
@@ -300,6 +300,63 @@
 ;;
 ;; The Faceup markup language is a generic markup language, regression
 ;; testing is merely one way to use it.
+;;
+;;
+;; Face Explorer:
+;;
+;; Library and tools for faces and text properties.
+;;
+;; This library is useful for packages that convert syntax highlighted
+;; buffers to other formats.  The functions can be used to determine
+;; how a face or a face text property looks, in terms of primitive
+;; face attributes (e.g. foreground and background colors).  Two sets
+;; of functions are provided, one for existing frames and one for
+;; fictitious displays, like 8 color tty.
+;;
+;; In addition, the following tools are provided:
+;;
+;; - `face-explorer-list-faces' -- list all available faces.  Like
+;;   `list-faces-display' but with information on how a face is
+;;   defined.  In addition, a sample for the selected frame and for a
+;;   fictitious display is shown.
+;;
+;; - `face-explorer-describe-face' -- Print detailed information on
+;;   how a face is defined, and list all underlying definitions.
+;;
+;; - `face-explorer-describe-face-prop' -- Describe the `face' text
+;;   property at the point in terms of primitive face attributes.
+;;   Also show how it would look on a fictitious display.
+;;
+;; - `face-explorer-list-display-features' -- Show which features a
+;;   display supports.  Most graphical displays support all, or most,
+;;   features.  However, many tty:s don't support, for example,
+;;   strike-through.  Using specially constructed faces, the resulting
+;;   buffer will render differently in different displays, e.g. a
+;;   graphical frame and a tty connected using `emacsclient -nw'.
+;;
+;; - `face-explorer-list-face-prop-examples' -- Show a buffer with an
+;;   assortment of `face' text properties.  A sample text is shown in
+;;   four variants: Native, a manually maintained reference vector,
+;;   the result of `face-explorer-face-prop-attributes' and
+;;   `face-explorer-face-prop-attributes-for-fictitious-display'.  Any
+;;   package that convert a buffer to another format (like HTML, ANSI,
+;;   or LaTeX) could use this buffer to ensure that everything work as
+;;   intended.
+;;
+;; - `face-explorer-list-overlay-examples' -- Show a buffer with a
+;;   number of examples of overlays, some are mixed with `face' text
+;;   properties.  Any package that convert a buffer to another format
+;;   (like HTML, ANSI, or LaTeX) could use this buffer to ensure that
+;;   everything work as intended.
+;;
+;; - `face-explorer-tooltip-mode' -- Minor mode that shows tooltips
+;;   containing text properties and overlays at the mouse pointer.
+;;
+;; - `face-explorer-simulate-display-mode' -- Minor mode for make a
+;;   buffer look like it would on a fictitious display.  Using this
+;;   you can, for example, see how a theme would look in using dark or
+;;   light background, a 8 color tty, or on a grayscale graphical
+;;   monitor.
 ;;
 ;;
 ;; Font Lock Regression Suite:
@@ -403,10 +460,6 @@
 ;;
 
 (eval-when-compile
-  ;; Note, in modern Emacs version, cl-lib should be used. However,
-  ;; it's not available (without using extra packages) in older Emacs
-  ;; versions.
-  (require 'cl)                         ; For `assert'.
   (defvar follow-mode))
 
 (declare-function follow-post-command-hook "follow.el")
@@ -486,7 +539,7 @@ This can be one of:
   "*Face used to visualize the anchored search region.
 
 Normally, the region is between the point and the end of the
-line. However, if the pre-match form returns a position (greater
+line.  However, if the pre-match form returns a position (greater
 than the point), this is used as the end of the region.")
 
 ;; Note: This is the value of the *variable* `font-lock-warning-face',
@@ -514,7 +567,7 @@ When setting a breakpoint in a buffer, the breakpoint will also
 be set for buffers considered aliases, provided they have an
 identical font-lock keyword.
 
-Each element is a list of major modes. The first element in the
+Each element is a list of major modes.  The first element in the
 list is used as key in `font-lock-studio-major-mode-breakpoints-alist'.")
 
 
@@ -648,7 +701,7 @@ overridden by the pre-match form.")
 
 
 (defvar font-lock-studio-original-font-lock-mode nil
-  "Non-nil if `font-lock-mode' should be restored in the source buffer.")
+  "Non-nil if Font-lock mode should be restored in the source buffer.")
 
 
 (defvar font-lock-studio-edebug-active nil
@@ -659,7 +712,7 @@ overridden by the pre-match form.")
   "Point in the interface buffer where a debuggable form is located.
 
 When Edebug is used, this form is used instead of the actual form
-in the font-lock keywords. The effect is that Edebug can be used
+in the font-lock keywords.  The effect is that Edebug can be used
 directly in the interface buffer.")
 
 
@@ -676,22 +729,43 @@ directly in the interface buffer.")
 
 
 ;; ------------------------------------------------------------
+;; Helpers
+
+
+;; Amazingly, there is no `assert' function in the core Emacs Lisp
+;; language of modern Emacs versions.
+;;
+;; Once upon a time, the package `cl' provided one along other useful
+;; functions inspired by Common Lisp. Unfortunately, `cl' has been
+;; deprecated and replaced with `cl-lib' which tries to make Emacs
+;; Lisp into a Common Lisp. For us that don't want that it leaves us
+;; without those functions.
+
+(defmacro font-lock-studio-assert (form)
+  "Issue an error if FORM is non-nil."
+  `(unless ,form
+     (error ,(format "Assertion failed: %s" form))))
+
+
+;; ------------------------------------------------------------
 
 
 ;;;###autoload
 (defun font-lock-studio (&optional arg)
   "Interactively debug the font-lock keywords of the current buffer.
 
-With \\[universal-argument] prefix, create a new, unique, interface buffer."
+With \\[universal-argument] prefix (when ARG is non-nil), create
+a new, unique, interface buffer."
   (interactive "P")
   (font-lock-studio-region (point-min) (point-max) arg))
 
 
 ;;;###autoload
 (defun font-lock-studio-region (beg end &optional arg)
-  "Interactively debug the font-lock keywords in the region.
+  "Interactively debug the font-lock keywords between BEG and END.
 
-With \\[universal-argument] prefix, create a new, unique, interface buffer."
+With \\[universal-argument] prefix (when ARG is non-nil), create
+a new, unique, interface buffer."
   (interactive "rP")
   (let ((name "*Font Lock Studio*"))
     (if arg
@@ -862,7 +936,7 @@ Used when restarting and when the interface buffer is killed."
 (defmacro font-lock-studio-with-clean-output-to-string (&rest body)
   "Eval BODY like `progn', collect, clean, and return output as string.
 
-Tab characters are emitted as \\t. Binds `indent-tabs-mode' to
+Tab characters are emitted as \\t.  Binds `indent-tabs-mode' to
 nil to ensure that indentation doesn't contain tab characters."
   `(let ((indent-tabs-mode nil))
      (replace-regexp-in-string
@@ -912,7 +986,7 @@ Return the index of the matching item, or nil if not found."
     res))
 
 (defun font-lock-studio-insert (s)
-  "Insert (or replace) text at point like `insert'.
+  "Insert (or replace) text S at point like `insert'.
 
 If there is text at point, reusing it rather than inserting new
 to ensure that visible windows aren't redisplayed."
@@ -1163,8 +1237,9 @@ rule search limit is shown."
       ;; --------------------
       ;; Remove any remaining text of the original buffer.
       (delete-region (point) (point-max))
-      (assert (equal font-lock-studio-insert-accumulated
-                     (buffer-substring (point-min) (point-max))))
+      (font-lock-studio-assert
+       (equal font-lock-studio-insert-accumulated
+              (buffer-substring (point-min) (point-max))))
       ;; --------------------
       ;; Move point and draw the fringe arrow in interface buffer.
       (goto-char p)
@@ -1273,7 +1348,7 @@ See `font-lock-studio-insert-expr' for PREFIX."
 (defun font-lock-studio-insert-expr (expr prefix &optional in-line)
   "Pretty-print EXPR and insert it into buffer.
 
-For each line, insert PREFIX before each line. If IN-LINE is
+For each line, insert PREFIX before each line.  If IN-LINE is
 non-nil, don't do this on the first line."
   (let ((indented-expr
          (replace-regexp-in-string
@@ -1437,7 +1512,7 @@ Return a string suitable to be applied to `message'."
 Return a list of sentences.
 
 See `font-lock-keywords' for details."
-  (assert (numberp (car highlight)))
+  (font-lock-studio-assert (numberp (car highlight)))
   (with-current-buffer font-lock-studio-buffer
     (let ((face (nth 1 highlight)))
       (cond ((symbolp face)
@@ -1593,7 +1668,7 @@ Return list of (GROUP BEG END)."
   "Return a fontified string of the printed representation of REGEXP.
 
 A group is colored if there is a corresponding match in MD or of
-ALL is non-nil. The group is colored according
+ALL is non-nil.  The group is colored according
 `font-lock-studio-color-list'."
   ;; Wrapper around `font-lock-studio-visualize-regexp0', asserting
   ;; that the return value is sound.
@@ -1601,7 +1676,7 @@ ALL is non-nil. The group is colored according
         (prx (font-lock-studio-with-clean-output-to-string
               (prin1 regexp))))
     ;; Note: `equal' ignored text properties.
-    (assert (equal prx res))
+    (font-lock-studio-assert (equal prx res))
     res))
 
 
@@ -1609,7 +1684,7 @@ ALL is non-nil. The group is colored according
   "Return a fontified string of the printed representation of REGEXP.
 
 A group is colored if there is a corresponding match in MD or of
-ALL is non-nil. The group is colored according
+ALL is non-nil.  The group is colored according
 `font-lock-studio-color-list'."
   (let ((groups (font-lock-studio-find-groups-in-regexp regexp))
         (group-number 0)
@@ -1667,7 +1742,7 @@ ALL is non-nil. The group is colored according
 (defun font-lock-studio-find-groups-in-regexp--peek-char (&optional extra)
   "Return character without consuming it, or nil if at the end.
 
-If EXTRA nil, the next character is used. Otherwise the character
+If EXTRA nil, the next character is used.  Otherwise the character
 EXTRA positions after the next is used."
   (unless extra
     (setq extra 0))
@@ -1681,7 +1756,7 @@ EXTRA positions after the next is used."
   "Consume and return the next character.
 
 The signal `invalid-regexp' is raised if there are no more
-characters. ERROR-HINT is a printable object used to present the
+characters.  ERROR-HINT is a printable object used to present the
 user with a more informative error message."
   (if (equal font-lock-studio-find-groups-in-regexp--index
              (length font-lock-studio-find-groups-in-regexp--regexp))
@@ -1879,7 +1954,7 @@ An error is issued if there are no more keywords to fontify.
 
 The value of BODY is expected to be t for normal termination,
 nil when all keywords were fontified, and `breakpoint' when a
-breakpoint was reached. A suitable message is displayed."
+breakpoint was reached.  A suitable message is displayed."
   (let ((res-var (make-symbol "--res--")))
     `(if (eq font-lock-studio-keyword-number :done)
          (user-error "No more keywords")
@@ -1930,7 +2005,8 @@ breakpoint was reached. A suitable message is displayed."
 (defun font-lock-studio-quit (&optional arg)
   "Quit the Font Lock Studio session.
 
-With \\[universal-argument] prefix, don't kill the interface buffer."
+With \\[universal-argument] prefix (when ARG is non-nil), don't
+kill the interface buffer."
   (interactive "P")
   (set-window-configuration font-lock-studio-window-configuration)
   (if (not arg)
@@ -1957,7 +2033,7 @@ With \\[universal-argument] prefix, don't kill the interface buffer."
      (if state
          (let ((keyword-number (nth 0 state)))
            (font-lock-studio-fontify-set-keyword keyword-number))
-       (user-error "No keyword here.")))))
+       (user-error "No keyword here.? ")))))
 
 
 ;; Note: Does not use `font-lock-studio-command-wrapper', since this
@@ -1991,7 +2067,8 @@ With \\[universal-argument] prefix, don't kill the interface buffer."
 (defun font-lock-studio-run (&optional nonstop)
   "Fontify all that is left.
 
-With \\[universal-argument] prefix, don't stop on breakpoints."
+With \\[universal-argument] prefix (when NONSTOP is non-nil),
+don't stop on breakpoints."
   (interactive "P")
   (font-lock-studio-command-wrapper-step
    (font-lock-studio-fontify-step-while #'(lambda () t) nonstop)))
@@ -2004,7 +2081,8 @@ With \\[universal-argument] prefix, don't stop on breakpoints."
 (defun font-lock-studio-next-keyword (&optional nonstop)
   "Finish current keyword and go to next.
 
-With \\[universal-argument] prefix, don't stop on breakpoints."
+With \\[universal-argument] prefix (when NONSTOP is non-nil),
+don't stop on breakpoints."
   (interactive "P")
   (font-lock-studio-command-wrapper-step
    (font-lock-studio-fontify-step-while
@@ -2028,7 +2106,8 @@ With \\[universal-argument] prefix, don't stop on breakpoints."
 (defun font-lock-studio-step-over (&optional nonstop)
   "Single step keywords, highlights, and parts of anchored highlights.
 
-With \\[universal-argument] prefix, don't stop on breakpoints."
+With \\[universal-argument] prefix (when NONSTOP is non-nil),
+don't stop on breakpoints."
   (interactive "P")
   (font-lock-studio-command-wrapper-step
    (cond ((eq font-lock-studio-keyword-number :done)
@@ -2092,7 +2171,8 @@ the anchored highlight.
 
 When in a highlight, to the the matcher of the keyword.
 
-With \\[universal-argument] prefix, don't stop on breakpoints."
+With \\[universal-argument] prefix (when NONSTOP is non-nil),
+don't stop on breakpoints."
   (interactive "P")
   (font-lock-studio-command-wrapper-step
    (cond (font-lock-studio-anchored-state
@@ -2133,7 +2213,8 @@ With \\[universal-argument] prefix, don't stop on breakpoints."
 (defun font-lock-studio-step-keyword-match (&optional nonstop)
   "Step one match of the current font-lock keyword.
 
-With \\[universal-argument] prefix, don't stop on breakpoints."
+With \\[universal-argument] prefix (when NONSTOP is non-nil),
+don't stop on breakpoints."
   (interactive "P")
   (font-lock-studio-command-wrapper-step
    (font-lock-studio-fontify-step-do-while
@@ -2317,7 +2398,8 @@ Font Lock Studio."
 ;;
 
 (defun font-lock-studio-eval-in-source-buffer (expr)
-  "Evaluate an expression in the source buffer.
+  "Evaluate EXPR in the source buffer.
+
 If interactive, prompt for the expression.
 Print result in minibuffer."
   (interactive (list (read-from-minibuffer
@@ -2347,7 +2429,7 @@ Print result in minibuffer."
                          font-lock-studio-keywords)))
             (setq matcher (car kw))))
       (user-error "No font-lock keyword active"))
-    (assert matcher)
+    (font-lock-studio-assert matcher)
     (if (symbolp matcher)
         (edebug-instrument-function matcher)
       (user-error "Matcher is not function symbol"))))
@@ -2607,7 +2689,7 @@ Return nil if there is no such keyword."
 (defun font-lock-studio-fontify-match-current-keyword ()
   "Search for occurrences described by MATCHER.
 Update state and return non-nil if found."
-  (assert (eq font-lock-studio-highlight-number nil))
+  (font-lock-studio-assert (eq font-lock-studio-highlight-number nil))
   (let* ((kw (nth font-lock-studio-keyword-number
                   font-lock-studio-keywords))
          (matcher (if (and font-lock-studio-edebug-active
@@ -2625,9 +2707,10 @@ Update state and return non-nil if found."
 
 (defun font-lock-studio-fontify-match-matcher (matcher &optional limit
                                                        dont-move-forward)
-  "Search for MATCHER. See `font-lock-keywords' for details.
+  "Search for MATCHER.  See `font-lock-keywords' for details.
 
-LIMIT is the search limit."
+LIMIT is the search limit.  When DONT-MOVE-FORWARD is nil, move
+point forward one character in case matcher didn't move point."
   (if (eq font-lock-studio-point limit)
       nil
     (let ((p font-lock-studio-point)
@@ -2672,7 +2755,7 @@ expression is replaced with one that is instrumented by Edebug."
   "The current anchored highlight.
 
 See `font-lock-studio-fontify-maybe-instrument-highlight' for DEBUG."
-  (assert (numberp font-lock-studio-anchored-state))
+  (font-lock-studio-assert (numberp font-lock-studio-anchored-state))
   (let* ((base-highlight (font-lock-studio-fontify-get-base-highlight))
          ;; Skip MATCHER, PRE-MATCH-FORM, and POST-MATCH-FORM.
          (highlight-list (nthcdr 3 base-highlight))
@@ -2723,10 +2806,10 @@ interface buffer itself."
 (defun font-lock-studio-fontify-current-highlight ()
   "Fontify current highlight.
 Return nil if there are no more highlights."
-  (assert font-lock-studio-highlight-number)
+  (font-lock-studio-assert font-lock-studio-highlight-number)
   (let ((highlight (font-lock-studio-fontify-get-base-highlight :instrument)))
     (set-match-data font-lock-studio-keyword-match-data)
-    (assert (numberp (car highlight)))
+    (font-lock-studio-assert (numberp (car highlight)))
     (font-lock-studio-fontify-highlight highlight)
     (font-lock-studio-fontify-set-next-highlight)))
 
@@ -2778,7 +2861,7 @@ of the current keyword."
 
 (defun font-lock-studio-fontify-do-anchored-pre-match-form ()
   "Run the pre-match form of an anchored highlight rule."
-  (assert (eq font-lock-studio-anchored-state :pre))
+  (font-lock-studio-assert (eq font-lock-studio-anchored-state :pre))
   (let* ((p font-lock-studio-point)
          (highlight (font-lock-studio-fontify-get-base-highlight))
          (expr (if (and font-lock-studio-edebug-active
@@ -2806,7 +2889,7 @@ of the current keyword."
 
 (defun font-lock-studio-fontify-do-anchored-post-match-form ()
   "Run the post-match form of an anchored highlight rule."
-  (assert (eq font-lock-studio-anchored-state :post))
+  (font-lock-studio-assert (eq font-lock-studio-anchored-state :post))
   (let* ((p font-lock-studio-point)
          (highlight (font-lock-studio-fontify-get-base-highlight))
          (expr (if (and font-lock-studio-edebug-active
@@ -2826,7 +2909,7 @@ of the current keyword."
 (defun font-lock-studio-fontify-match-anchored-matcher ()
   "Search for MATCHER in current anchored highlight rule.
 Return nil when no match was found."
-  (assert (eq font-lock-studio-anchored-state :matcher))
+  (font-lock-studio-assert (eq font-lock-studio-anchored-state :matcher))
   (let ((highlight (font-lock-studio-fontify-get-base-highlight)))
     (set-match-data font-lock-studio-keyword-match-data)
     (let ((matched (font-lock-studio-fontify-match-matcher
@@ -2842,7 +2925,7 @@ Return nil when no match was found."
 
 (defun font-lock-studio-fontify-current-anchored-highlight ()
   "Fontify current highlight in an anchored rule."
-  (assert (numberp font-lock-studio-anchored-state))
+  (font-lock-studio-assert (numberp font-lock-studio-anchored-state))
   (font-lock-studio-fontify-highlight
    (font-lock-studio-fontify-get-anchored-highlight :instrument))
   (font-lock-studio-fontify-set-next-anchored-state))
@@ -2877,7 +2960,7 @@ MATCHED is non-nil.
 If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
   (unless base-highlight
     (setq base-highlight (font-lock-studio-fontify-get-base-highlight)))
-  (assert (not (numberp base-highlight)))
+  (font-lock-studio-assert (not (numberp base-highlight)))
   (let ((len (length base-highlight)))
     (while (progn
              (font-lock-studio-fontify-set-next-anchored-state0
@@ -2904,7 +2987,8 @@ If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
     (matched base-highlight)
   "Set next anchored state, new state might not correspond to existing part.
 
-See `font-lock-studio-fontify-set-next-anchored-state' for details."
+See `font-lock-studio-fontify-set-next-anchored-state' for
+details about MATCHED and BASE-HIGHLIGHT."
   (cond ((null font-lock-studio-anchored-state)
          ;; Set default anchored search limit. This is used when
          ;; there is no :pre form or when it is skipped.

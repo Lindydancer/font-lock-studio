@@ -1,7 +1,7 @@
 # font-lock-studio - interactive debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.7<br>
+*Version:* 0.0.8<br>
 *URL:* [https://github.com/Lindydancer/font-lock-studio](https://github.com/Lindydancer/font-lock-studio)<br>
 
 Interactive debugger for font-lock keywords (Emacs syntax
@@ -9,12 +9,12 @@ highlighting rules).
 
 Font Lock Studio lets you *single-step* Font Lock keywords --
 matchers, highlights, and anchored rules, so that you can see what
-happens when a buffer is fontified. You can set *breakpoints* on or
-inside rules and *run* until one has been hit. When inside a rule,
-matches are *visualized* using a palette of background colors. The
-*explainer* can describe a rule in plain-text English. Tight
-integration with *Edebug* allows you to step into Lisp expressions
-that are part of the Font Lock keywords.
+happens when a buffer is fontified.  You can set *breakpoints* on
+or inside rules and *run* until one has been hit.  When inside a
+rule, matches are *visualized* using a palette of background
+colors.  The *explainer* can describe a rule in plain-text English.
+Tight integration with *Edebug* allows you to step into Lisp
+expressions that are part of the Font Lock keywords.
 
 ## Usage
 
@@ -26,7 +26,7 @@ When Font Lock Studio is started, comments and strings are
 pre-colored, as they are part of the earlier *syntactic phase*
 (which isn't supported by Font Lock Studio).
 
-Start the debugger by typing <kbd>M-x font-lock-studio RET</kbd>. Press `?`
+Start the debugger by typing <kbd>M-x font-lock-studio RET</kbd>.  Press `?`
 or see the menu for available commands.
 
 ### Why use a debugger?
@@ -38,7 +38,7 @@ work.
 
 Regardless of your background and ambition, there is a world of
 difference between simply reading Font Lock keywords and being able
-to step through the rules and exactly see what they do. In fact, as
+to step through the rules and exactly see what they do.  In fact, as
 part of writing Font Lock Studio, I learned some new Font Lock
 tricks from various major modes -- despite having 15+ years of
 experience with Font Lock.
@@ -46,8 +46,8 @@ experience with Font Lock.
 ## Example
 
 For a buffer using `html-mode`, the interface buffer looks the
-following. Other major modes typically have more and more complex
-rules. The arrow on the left indicates the current active location.
+following.  Other major modes typically have more and more complex
+rules.  The arrow on the left indicates the current active location.
 A corresponding arrow in the source buffer is placed at the current
 search location.
 
@@ -93,14 +93,14 @@ search location.
           Explain rules      : YES
           Show compiled code : NO
 
-Press space to single step through all the keywords. "n" will go
+Press space to single step through all the keywords.  "n" will go
 the the next keyword, "b" will set a breakpoint, "g" will run to
 the end (or to the next breakpoint) and "q" will quit.
 
 In the following screenshot, you will see the debugger in action.
 The user has stepped into the last rule (for the second out of
 three times) -- the matches are visualized in the regexp, in the
-source buffer and in the highlight rule. In addition, *auto
+source buffer and in the highlight rule.  In addition, *auto
 explainer* is active so the rule is described in english.
 Furthermore, the red text means a *breakpoint* is set, in this case
 on a highlight rule, which is part of a Font Lock keyword rule.
@@ -112,7 +112,7 @@ on a highlight rule, which is part of a Font Lock keyword rule.
 ### Stepping
 
 You can single *step into*, *over*, and *out* of Font Lock
-keywords. *Anchored* rules are fully supported. In addition, you
+keywords.  *Anchored* rules are fully supported.  In addition, you
 can *run* to the end or to the next breakpoint.
 
 ### Breakpoints
@@ -125,7 +125,7 @@ If you want to step or run without stopping on breakpoints, prefix
 the command with <kbd>C-u</kbd>.
 
 Note that in an anchored rule, you can set a breakpoints either on
-the entire rule or on an individual part. In the former case, only
+the entire rule or on an individual part.  In the former case, only
 the outer parentheses are highlighted.
 
 ### Match Data Visualization
@@ -133,20 +133,20 @@ the outer parentheses are highlighted.
 After the *matcher* of a keyword or anchored highlight has been
 executed, the match data (whatever the search found) is visualized
 using background colors in the source buffer, in the regexp, and
-over the corresponding highlight rule or rules. If part of a regexp
+over the corresponding highlight rule or rules.  If part of a regexp
 or a highlight didn't match, it is not colored, this can for
 example happen when the postfix regexp operator `?` is used.
 
 Note that an inner match group gets precedence over an outer group.
 This can lead to situations where a highlight rule gets a color
-that doesn't appear in the regexp or in the source buffer. For
+that doesn't appear in the regexp or in the source buffer.  For
 example, the matcher "\\(abc\\)" will be colored with the color for
 match 1, while the higlight rule `(0 a-face)` gets the color for
 match 0.
 
 ### Normalized keywords
 
-The keywords presented in the interface have been normalized. For
+The keywords presented in the interface have been normalized.  For
 example, instead of
 
          ("xyz" . font-lock-type-face)
@@ -155,12 +155,12 @@ the keyword
 
           ("xyz" (0 font-lock-type-face))
 
-is shown. See `font-lock-studio-normalize-keywords` for details.
+is shown.  See `font-lock-studio-normalize-keywords` for details.
 
 ### Explainer
 
 The *explainer* echoes a human-readble description of the current
-part of the Font Lock keywords. This help you to understand that
+part of the Font Lock keywords.  This help you to understand that
 all those `nil`:s and `t`:s in the rules actually mean.
 
 When using the *auto explainer*, Font Lock Studio echoes the
@@ -175,7 +175,7 @@ to instrument called functions for debugging in their source file.
 ### Follow mode awareness
 
 The search location in the source buffer is visualized by an
-overlay arrow and by updating the point. If the source buffer is
+overlay arrow and by updating the point.  If the source buffer is
 visible in multiple side-by-side windows and Follow mode is
 enabled, the search location will be shown in a suitable windows to
 minimize scrolling.
@@ -186,7 +186,7 @@ minimize scrolling.
 
 Traditionally, if you use a function as a matcher and that function
 doesn't return -- Emacs hangs and all you can do is to kill it and
-restart. (I know from personal experience that it's not uncommon
+restart.  (I know from personal experience that it's not uncommon
 for functions that parse text to hang -- for example, when you have
 forgotten to check for the end-of-buffer.) When using font-lock
 studio, you can simply press <kbd>C-q</kbd> to exit.
@@ -199,7 +199,7 @@ loading the file, and finally launch Font-Lock studio.
 
 The keywords provided by major modes like `c-mode`, `objc-mode`,
 `cpp-mode` that are based on `cc-mode` contain *byte-compiled*
-font-lock keywords, which are unreadable and undebugable. To use
+font-lock keywords, which are unreadable and undebugable.  To use
 corresponding keywords with *uncompiled* code, copy the file
 `cc-fonts.el`, replace explicit calls to `byte-compile` with `eval`
 and issue <kbd>M-x eval-buffer RET</kbd>.
@@ -210,7 +210,7 @@ and issue <kbd>M-x eval-buffer RET</kbd>.
 
 Font Lock Studio provides it's own fontification engine, designed
 to for things needed by a debugger such as single-stepping and
-breakpoints. This fontification engine lacks a lot of features of
+breakpoints.  This fontification engine lacks a lot of features of
 the real font-lock fontification engine, such as the speed and the
 ability to refontify when the buffer is modified.
 
@@ -219,7 +219,7 @@ The fontification engine can be used without an interface buffer.
 ### Regexp decomposer
 
 In order for to visualize the groups in regexp:s that corresponds
-to matches, they must be located. This requires a non-trivial
+to matches, they must be located.  This requires a non-trivial
 *regexp parser*.
 
 ## Other Font Lock Tools
@@ -258,12 +258,12 @@ rainbow is updated.
 ### [Faceup](https://github.com/Lindydancer/faceup)
 
 Emacs is capable of highlighting buffers based on language-specific
-`font-lock` rules. This package makes it possible to perform
+`font-lock` rules.  This package makes it possible to perform
 regression test for packages that provide font-lock rules.
 
 The underlying idea is to convert text with highlights ("faces")
 into a plain text representation using the Faceup markup
-language. This language is semi-human readable, for example:
+language.  This language is semi-human readable, for example:
 
     «k:this» is a keyword
 
@@ -276,6 +276,55 @@ standard Emacs regression test system.
 
 The Faceup markup language is a generic markup language, regression
 testing is merely one way to use it.
+
+### [Face Explorer](https://github.com/Lindydancer/face-explorer)
+
+Library and tools for faces and text properties.
+
+This library is useful for packages that convert syntax highlighted
+buffers to other formats.  The functions can be used to determine
+how a face or a face text property looks, in terms of primitive
+face attributes (e.g. foreground and background colors).  Two sets
+of functions are provided, one for existing frames and one for
+fictitious displays, like 8 color tty.
+
+In addition, the following tools are provided:
+
+- `face-explorer-list-faces` -- list all available faces.  Like
+  `list-faces-display` but with information on how a face is
+  defined.  In addition, a sample for the selected frame and for a
+  fictitious display is shown.
+- `face-explorer-describe-face` -- Print detailed information on
+  how a face is defined, and list all underlying definitions.
+- `face-explorer-describe-face-prop` -- Describe the `face` text
+  property at the point in terms of primitive face attributes.
+  Also show how it would look on a fictitious display.
+- `face-explorer-list-display-features` -- Show which features a
+  display supports.  Most graphical displays support all, or most,
+  features.  However, many tty:s don't support, for example,
+  strike-through.  Using specially constructed faces, the resulting
+  buffer will render differently in different displays, e.g. a
+  graphical frame and a tty connected using `emacsclient -nw`.
+- `face-explorer-list-face-prop-examples` -- Show a buffer with an
+  assortment of `face` text properties.  A sample text is shown in
+  four variants: Native, a manually maintained reference vector,
+  the result of `face-explorer-face-prop-attributes` and
+  `face-explorer-face-prop-attributes-for-fictitious-display`.  Any
+  package that convert a buffer to another format (like HTML, ANSI,
+  or LaTeX) could use this buffer to ensure that everything work as
+  intended.
+- `face-explorer-list-overlay-examples` -- Show a buffer with a
+  number of examples of overlays, some are mixed with `face` text
+  properties.  Any package that convert a buffer to another format
+  (like HTML, ANSI, or LaTeX) could use this buffer to ensure that
+  everything work as intended.
+- `face-explorer-tooltip-mode` -- Minor mode that shows tooltips
+  containing text properties and overlays at the mouse pointer.
+- `face-explorer-simulate-display-mode` -- Minor mode for make a
+  buffer look like it would on a fictitious display.  Using this
+  you can, for example, see how a theme would look in using dark or
+  light background, a 8 color tty, or on a grayscale graphical
+  monitor.
 
 ### [Font Lock Regression Suite](https://github.com/Lindydancer/font-lock-regression-suite)
 
