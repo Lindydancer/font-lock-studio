@@ -1,11 +1,11 @@
-;;; font-lock-studio.el --- interactive debugger for Font Lock keywords.
+;;; font-lock-studio.el --- Debugger for Font Lock keywords.  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2013-2017 Anders Lindgren
+;; Copyright (C) 2013-2017,2022,2025  Anders Lindgren
 
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.8
+;; Version: 0.0.9
 ;; URL: https://github.com/Lindydancer/font-lock-studio
 ;; Package-Requires: ((emacs "24.3"))
 

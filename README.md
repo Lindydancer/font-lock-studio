@@ -1,7 +1,7 @@
-# font-lock-studio - interactive debugger for Font Lock keywords
+# font-lock-studio - Debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.8<br>
+*Version:* 0.0.9<br>
 *URL:* [https://github.com/Lindydancer/font-lock-studio](https://github.com/Lindydancer/font-lock-studio)<br>
 
 Interactive debugger for font-lock keywords (Emacs syntax

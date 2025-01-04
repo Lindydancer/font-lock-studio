@@ -1,4 +1,4 @@
-;;; font-lock-studio-test.el --- Regression tests for font-lock-studio.
+;;; font-lock-studio-test.el --- Unit tests for font-lock-studio.  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2013-2014,2016 Anders Lindgren
 

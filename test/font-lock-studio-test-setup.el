@@ -1,4 +1,4 @@
-;;; font-lock-studio-test-setup.el --- Setup and execute all tests
+;;; font-lock-studio-test-setup.el --- Setup and execute all tests.  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

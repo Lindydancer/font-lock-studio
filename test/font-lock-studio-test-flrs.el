@@ -1,4 +1,4 @@
-;;; font-lock-studio-test-flrs.el --- Real-world tests for font-lock-studio.
+;;; font-lock-studio-test-flrs.el --- Regression tests for f-l-studio. -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2016-2017 Anders Lindgren
 
