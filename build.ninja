@@ -1,0 +1,4 @@
+rule compile_file
+  command = emacs -batch $args -f batch-byte-compile $in
+
+build font-lock-studio.elc: compile_file font-lock-studio.el
