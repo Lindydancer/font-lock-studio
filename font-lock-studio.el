@@ -777,18 +777,17 @@ a new, unique, interface buffer."
         (font-lock-studio-finish))
       ;; Start new session.
       (font-lock-set-defaults)
-      (let ((keywords font-lock-keywords))
-        (with-current-buffer interface-buffer
-          (font-lock-studio-mode)
-          (set (make-local-variable 'font-lock-studio-window-configuration)
-               (current-window-configuration))
-          (make-local-variable 'font-lock-studio-overlays)
-          (make-local-variable 'overlay-arrow-position)
-          (font-lock-studio-fontify-start orig-buffer beg end)
-          (font-lock-studio-fontify-restart)
-          (select-window (display-buffer interface-buffer))
-          (font-lock-studio-render)
-          (font-lock-studio-show-source))))))
+      (with-current-buffer interface-buffer
+        (font-lock-studio-mode)
+        (set (make-local-variable 'font-lock-studio-window-configuration)
+             (current-window-configuration))
+        (make-local-variable 'font-lock-studio-overlays)
+        (make-local-variable 'overlay-arrow-position)
+        (font-lock-studio-fontify-start orig-buffer beg end)
+        (font-lock-studio-fontify-restart)
+        (select-window (display-buffer interface-buffer))
+        (font-lock-studio-render)
+        (font-lock-studio-show-source)))))
 
 
 (defun font-lock-studio-finish ()
@@ -1687,7 +1686,6 @@ A group is colored if there is a corresponding match in MD or of
 ALL is non-nil.  The group is colored according
 `font-lock-studio-color-list'."
   (let ((groups (font-lock-studio-find-groups-in-regexp regexp))
-        (group-number 0)
         (res ""))
     (let ((flat-list (font-lock-studio-flatten-match-data groups))
           (index 0))
@@ -2984,7 +2982,7 @@ If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
 ;; For example, this may set :pre state even if there is no
 ;; PRE-MATCH-FORM in the highlight.
 (defun font-lock-studio-fontify-set-next-anchored-state0
-    (matched base-highlight)
+    (matched _)
   "Set next anchored state, new state might not correspond to existing part.
 
 See `font-lock-studio-fontify-set-next-anchored-state' for
