@@ -1,3 +1,5 @@
+[![MELPA](https://melpa.org/packages/font-lock-studio-badge.svg)](https://melpa.org/#/font-lock-studio)
+
 # font-lock-studio - Debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
