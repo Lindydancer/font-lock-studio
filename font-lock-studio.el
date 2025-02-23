@@ -3096,7 +3096,7 @@ Converts:                   To:
 MATCHER                     (MATCHER (0 font-lock-keyword-face))
 \(MATCHER . SUBEXP)          (MATCHER (SUBEXP font-lock-keyword-face))
 \(MATCHER . FACENAME)        (MATCHER (0 FACENAME))
-\(MATCHER . 'FACENAME)       (MATCHER (0 'FACENAME))
+\(MATCHER . \='FACENAME)       (MATCHER (0 \='FACENAME))
 \(MATCHER . HIGHLIGHT)       (MATCHER HIGHLIGHT)"
   (let ((res '()))
     (dolist (kw keywords)
