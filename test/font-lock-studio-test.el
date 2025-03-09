@@ -689,13 +689,13 @@ is echoed and, if the comparison failed, the log is displayed."
      (equal
       (font-lock-studio-test-explain-current-state)
       "Highlight: Face `font-lock-keyword-face' \
-\(via variable `font-lock-keyword-face')."))
+\(via variable `font-lock-keyword-face')"))
     (should (font-lock-studio-fontify-set-next-highlight))
     (should
      (equal
       (font-lock-studio-test-explain-current-state)
       "Highlight: Face should come from variable `an-unbound-variable', \
-which is unbound (missing quote?)."))
+which is unbound (missing quote?)"))
     (should (font-lock-studio-fontify-set-next-keyword))
     (should (equal (font-lock-studio-test-explain-current-state)
                    "Keyword with function name matcher"))

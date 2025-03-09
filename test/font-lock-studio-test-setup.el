@@ -30,6 +30,7 @@
 (require 'font-lock-studio)
 
 (require 'font-lock-studio-test)
+(require 'font-lock-studio-test-edebug)
 
 (ert t)
 

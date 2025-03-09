@@ -1,7 +1,7 @@
 # font-lock-studio - Debugger for Font Lock keywords
 
 *Author:* Anders Lindgren<br>
-*Version:* 0.0.9<br>
+*Version:* 0.0.10<br>
 *URL:* [https://github.com/Lindydancer/font-lock-studio](https://github.com/Lindydancer/font-lock-studio)<br>
 
 Interactive debugger for font-lock keywords (Emacs syntax
@@ -20,7 +20,7 @@ expressions that are part of the Font Lock keywords.
 
 When using the debugger, an *interface buffer* is displayed, it
 contains all the keywords and is used for navigation and
-visalization of match data.
+visualization of match data.
 
 When Font Lock Studio is started, comments and strings are
 pre-colored, as they are part of the earlier *syntactic phase*
@@ -101,7 +101,7 @@ In the following screenshot, you will see the debugger in action.
 The user has stepped into the last rule (for the second out of
 three times) -- the matches are visualized in the regexp, in the
 source buffer and in the highlight rule.  In addition, *auto
-explainer* is active so the rule is described in english.
+explainer* is active so the rule is described in English.
 Furthermore, the red text means a *breakpoint* is set, in this case
 on a highlight rule, which is part of a Font Lock keyword rule.
 
@@ -141,7 +141,7 @@ Note that an inner match group gets precedence over an outer group.
 This can lead to situations where a highlight rule gets a color
 that doesn't appear in the regexp or in the source buffer.  For
 example, the matcher "\\(abc\\)" will be colored with the color for
-match 1, while the higlight rule `(0 a-face)` gets the color for
+match 1, while the highlight rule `(0 a-face)` gets the color for
 match 0.
 
 ### Normalized keywords
@@ -159,7 +159,7 @@ is shown.  See `font-lock-studio-normalize-keywords` for details.
 
 ### Explainer
 
-The *explainer* echoes a human-readble description of the current
+The *explainer* echoes a human-readable description of the current
 part of the Font Lock keywords.  This help you to understand that
 all those `nil`:s and `t`:s in the rules actually mean.
 
@@ -180,7 +180,7 @@ visible in multiple side-by-side windows and Follow mode is
 enabled, the search location will be shown in a suitable windows to
 minimize scrolling.
 
-## Tips and trix
+## Tips and tricks
 
 ### The "Hanging Emacs" problem
 
@@ -199,7 +199,7 @@ loading the file, and finally launch Font-Lock studio.
 
 The keywords provided by major modes like `c-mode`, `objc-mode`,
 `cpp-mode` that are based on `cc-mode` contain *byte-compiled*
-font-lock keywords, which are unreadable and undebugable.  To use
+font-lock keywords, which are unreadable and undebuggable.  To use
 corresponding keywords with *uncompiled* code, copy the file
 `cc-fonts.el`, replace explicit calls to `byte-compile` with `eval`
 and issue <kbd>M-x eval-buffer RET</kbd>.

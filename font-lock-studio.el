@@ -1,11 +1,11 @@
-;;; font-lock-studio.el --- Debugger for Font Lock keywords.  -*- lexical-binding: t; -*-
+;;; font-lock-studio.el --- Debugger for Font Lock keywords  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2013-2017,2022,2025  Anders Lindgren
 
 ;; Author: Anders Lindgren
 ;; Keywords: faces, tools
 ;; Created: 2013-12-07
-;; Version: 0.0.9
+;; Version: 0.0.10
 ;; URL: https://github.com/Lindydancer/font-lock-studio
 ;; Package-Requires: ((emacs "24.3"))
 
@@ -40,7 +40,7 @@
 ;;
 ;; When using the debugger, an *interface buffer* is displayed, it
 ;; contains all the keywords and is used for navigation and
-;; visalization of match data.
+;; visualization of match data.
 ;;
 ;; When Font Lock Studio is started, comments and strings are
 ;; pre-colored, as they are part of the earlier *syntactic phase*
@@ -122,7 +122,7 @@
 ;; The user has stepped into the last rule (for the second out of
 ;; three times) -- the matches are visualized in the regexp, in the
 ;; source buffer and in the highlight rule.  In addition, *auto
-;; explainer* is active so the rule is described in english.
+;; explainer* is active so the rule is described in English.
 ;; Furthermore, the red text means a *breakpoint* is set, in this case
 ;; on a highlight rule, which is part of a Font Lock keyword rule.
 ;;
@@ -162,7 +162,7 @@
 ;; This can lead to situations where a highlight rule gets a color
 ;; that doesn't appear in the regexp or in the source buffer.  For
 ;; example, the matcher "\\(abc\\)" will be colored with the color for
-;; match 1, while the higlight rule `(0 a-face)' gets the color for
+;; match 1, while the highlight rule `(0 a-face)' gets the color for
 ;; match 0.
 ;;
 ;; Normalized keywords:
@@ -180,7 +180,7 @@
 ;;
 ;; Explainer:
 ;;
-;; The *explainer* echoes a human-readble description of the current
+;; The *explainer* echoes a human-readable description of the current
 ;; part of the Font Lock keywords.  This help you to understand that
 ;; all those `nil':s and `t':s in the rules actually mean.
 ;;
@@ -201,7 +201,7 @@
 ;; enabled, the search location will be shown in a suitable windows to
 ;; minimize scrolling.
 
-;; Tips and trix:
+;; Tips and tricks:
 ;;
 ;; The "Hanging Emacs" problem:
 ;;
@@ -220,7 +220,7 @@
 ;;
 ;; The keywords provided by major modes like `c-mode', `objc-mode',
 ;; `cpp-mode' that are based on `cc-mode' contain *byte-compiled*
-;; font-lock keywords, which are unreadable and undebugable.  To use
+;; font-lock keywords, which are unreadable and undebuggable.  To use
 ;; corresponding keywords with *uncompiled* code, copy the file
 ;; `cc-fonts.el', replace explicit calls to `byte-compile' with `eval'
 ;; and issue `M-x eval-buffer RET'.
@@ -438,7 +438,7 @@
 ;; - Print code better (indented, font-locked, lambda and parameter
 ;;   list on the same line).
 ;;
-;; - bind debug-on-error and debug-on-quit temporarily (like edebug does).
+;; - bind debug-on-error and debug-on-quit temporarily (like Edebug does).
 
 ;; Random notes:
 ;;
@@ -482,7 +482,7 @@
                                             "grey85"
                                             "OliveDrab2"
                                             "Yellow")
-  "*List of light colors suitable for match data visualization.")
+  "List of light colors suitable for match data visualization.")
 
 
 (defvar font-lock-studio-color-list-medium '("Cyan"
@@ -491,7 +491,7 @@
                                              "grey75"
                                              "yellow3"
                                              "orchid1")
-  "*List of medium colors suitable for match data visualization.")
+  "List of medium colors suitable for match data visualization.")
 
 
 (defvar font-lock-studio-color-list-dark '("DeepSkyBlue"
@@ -500,11 +500,11 @@
                                            "grey65"
                                            "gold3"
                                            "orchid3")
-  "*List of dark colors suitable for match data visualization.")
+  "List of dark colors suitable for match data visualization.")
 
 
 (defvar font-lock-studio-color-scheme 'light-to-dark
-  "*The preferred colors used for match data visualization.
+  "The preferred colors used for match data visualization.
 
 This can be one of:
 
@@ -532,11 +532,11 @@ This can be one of:
          font-lock-studio-color-list-dark)
         (t
          (error "Unexpected color scheme")))
-  "*List of colors used to visualize matches in control and source buffers.")
+  "List of colors used to visualize matches in control and source buffers.")
 
 
 (defvar font-lock-studio-anchored-search-region-face 'region
-  "*Face used to visualize the anchored search region.
+  "Face used to visualize the anchored search region.
 
 Normally, the region is between the point and the end of the
 line.  However, if the pre-match form returns a position (greater
@@ -552,7 +552,7 @@ property list suitable for the `face' special property.")
 
 
 (defvar font-lock-studio-auto-explain t
-  "*When non-nil, a human-readable explanation is echoed after each command.
+  "When non-nil, a human-readable explanation is echoed after each command.
 
 The explanation is only echoed if no other message is present.
 
@@ -561,7 +561,7 @@ See also `font-lock-studio-toggle-auto-explain'.")
 
 (defvar font-lock-studio-major-mode-alias
   '((c-mode cpp-mode objc-mode))
-  "*List of major modes considered equal.
+  "List of major modes considered equal.
 
 When setting a breakpoint in a buffer, the breakpoint will also
 be set for buffers considered aliases, provided they have an
@@ -572,21 +572,49 @@ list is used as key in `font-lock-studio-major-mode-breakpoints-alist'.")
 
 
 (defvar font-lock-studio-show-compiled-code nil
-  "*When nil, compiled code is not shown in Font Lock Studio.
+  "When nil, compiled code is not shown in Font Lock Studio.
 
 See also `font-lock-studio-toggle-show-compiled-code'.")
 
 
 (defvar font-lock-studio-show-public-state t
-  "*When non-nil, show public state variables in Font Lock Studio.
+  "When non-nil, show public state variables in Font Lock Studio.
 
-See also `font-lock-studio-toggle-show-public-state'")
+See also `font-lock-studio-toggle-show-public-state'.")
 
 
 (defvar font-lock-studio-show-internal-state nil
-  "*When non-nil, show internal state variables in Font Lock Studio.
+  "When non-nil, show internal state variables in Font Lock Studio.
 
-See also `font-lock-studio-toggle-show-internal-state'")
+See also `font-lock-studio-toggle-show-internal-state'.")
+
+
+;; Note: The representation of closures are considered internal and
+;; may change in future versions of Emacs.  The default value of the
+;; following variable is constructed so that it evaluated to a non-nil
+;; value only when lambda:s appear to have the same representation as
+;; in Emacs 29.4 (currently, the latest version).
+;;
+;; Note: "Edebug can't step into closures" means that the following
+;; code will return a callable object when applied to a printed lambda
+;; but not to a printed closure:
+;;
+;;     (let ((edebug-all-forms t)
+;;           (edebug-all-defs t))
+;;       (edebug-read-and-maybe-wrap-form))
+
+(defvar font-lock-studio-render-plain-closure-as-lambda
+  (equal (lambda () nil) '(closure (t) () nil))
+  "When non-nil, matchers that are plain closures are rendered as lambdas.
+
+A \"plain closure\" is a closure that doesn't capture outer
+variables.
+
+In a lexical binding environment, a `lambda' expression in the
+source code is evaluated to a `closure'.  By rendering a closure
+matcher as a lambda in the Font Lock Studio interface buffer it
+will more resemble the source code.  In addition, Edebug can step
+into lambdas but not into closures.")
 
 
 ;; --------------------
@@ -637,7 +665,7 @@ HIGHLIGHT is a number, and ANCHOR-STATE a number or one of
 (defvar font-lock-studio-case-fold-search nil
   "Non-nil means search is case-insensitive.
 
-This corresponds to `font-lock--case-fold-search' of the srouce buffer.")
+This corresponds to `font-lock--case-fold-search' of the source buffer.")
 
 
 (defvar font-lock-studio-multiline nil
@@ -747,6 +775,12 @@ directly in the interface buffer.")
      (error ,(format "Assertion failed: %s" form))))
 
 
+(defun font-lock-studio-closurep (object)
+  "Non-nil if OBJECT is a closure."
+  (if (fboundp 'closurep)
+      (closurep object)
+    (eq (car-safe object) 'closure)))
+
 ;; ------------------------------------------------------------
 
 
@@ -777,18 +811,17 @@ a new, unique, interface buffer."
         (font-lock-studio-finish))
       ;; Start new session.
       (font-lock-set-defaults)
-      (let ((keywords font-lock-keywords))
-        (with-current-buffer interface-buffer
-          (font-lock-studio-mode)
-          (set (make-local-variable 'font-lock-studio-window-configuration)
-               (current-window-configuration))
-          (make-local-variable 'font-lock-studio-overlays)
-          (make-local-variable 'overlay-arrow-position)
-          (font-lock-studio-fontify-start orig-buffer beg end)
-          (font-lock-studio-fontify-restart)
-          (select-window (display-buffer interface-buffer))
-          (font-lock-studio-render)
-          (font-lock-studio-show-source))))))
+      (with-current-buffer interface-buffer
+        (font-lock-studio-mode)
+        (set (make-local-variable 'font-lock-studio-window-configuration)
+             (current-window-configuration))
+        (make-local-variable 'font-lock-studio-overlays)
+        (make-local-variable 'overlay-arrow-position)
+        (font-lock-studio-fontify-start orig-buffer beg end)
+        (font-lock-studio-fontify-restart)
+        (select-window (display-buffer interface-buffer))
+        (font-lock-studio-render)
+        (font-lock-studio-show-source)))))
 
 
 (defun font-lock-studio-finish ()
@@ -806,14 +839,35 @@ Used when restarting and when the interface buffer is killed."
 
 
 (eval-when-compile
-  ;; Same as used by font-lock.el
-  ;; We use this to preserve or protect things when modifying text properties.
+  (defmacro font-lock-studio-with-suppressed-warnings (warnings &rest body)
+    "Like `with-suppressed-warnings', when it is defined.
+
+Otherwise, behave like `progn'."
+    (declare (indent 1) (debug t))
+    ;; `with-suppressed-warnings' was introduced in Emacs 27.1.
+    (if (fboundp 'with-suppressed-warnings)
+        `(with-suppressed-warnings ,warnings
+           ,@body)
+      `(progn
+         ,@body)))
+
   (defmacro font-lock-studio-save-buffer-state (&rest body)
-    "Eval BODY, silencing modifications and inhibiting hooks."
+    "Evaluate BODY, silencing modifications and inhibiting hooks."
     (declare (indent 0) (debug t))
-    `(let ((inhibit-point-motion-hooks t))
-       (with-silent-modifications
-         ,@body))))
+    ;; Silence the `inhibit-point-motion-hooks' deprecation warning.
+    ;;
+    ;; It's only used to avoid problems with packages that use the
+    ;; deprecated properties `intangible', `point-entered', and
+    ;; `point-left'.
+    ;;
+    ;; The compiler suggests using `cursor-intangible-mode' and
+    ;; `cursor-sensor-mode'. Unfortunately, this advice is not for us
+    ;; but for packages that use the deprecated properties.
+    `(font-lock-studio-with-suppressed-warnings
+         ((obsolete inhibit-point-motion-hooks))
+       (let ((inhibit-point-motion-hooks t))
+         (with-silent-modifications
+           ,@body)))))
 
 
 ;; ------------------------------------------------------------
@@ -874,8 +928,7 @@ Used when restarting and when the interface buffer is killed."
   (define-key map "tx" 'font-lock-studio-toggle-auto-explain)
 
   (define-key map "te" 'font-lock-studio-toggle-debug-on-error)
-  (define-key map "tq" 'font-lock-studio-toggle-debug-on-quit)
-  )
+  (define-key map "tq" 'font-lock-studio-toggle-debug-on-quit))
 
 
 (defvar font-lock-studio-mode-menus
@@ -916,13 +969,12 @@ Used when restarting and when the interface buffer is killed."
     ["Display Source"              font-lock-studio-display-source]
     ["Show Match Data"             font-lock-studio-show-match-data]
     ["Update Interface Buffer"     font-lock-studio-update-interface-buffer]
-    ["Quit"                        font-lock-studio-quit]
-    ))
+    ["Quit"                        font-lock-studio-quit]))
 
 
 (easy-menu-define
   font-lock-studio-menu font-lock-studio-mode-map
-  "Font Lock Studio menus" font-lock-studio-mode-menus)
+  "Font Lock Studio menus." font-lock-studio-mode-menus)
 
 
 ;; --------------------
@@ -951,7 +1003,7 @@ nil to ensure that indentation doesn't contain tab characters."
 ;;
 ;; The `font-lock-studio-render' function is written so that it
 ;; appears as though it clears the buffer and inserts new content.
-;; However, if it should neively do so, things like window starts
+;; However, if it should naively do so, things like window starts
 ;; would no long work. Instead, this checks if the buffer already
 ;; happened to contain what is inserted, and if so, reuse the existing
 ;; text by simply copying text properties to it.
@@ -1034,7 +1086,7 @@ to ensure that visible windows aren't redisplayed."
 (defun font-lock-studio-render ()
   "Draw the Font Lock Studio interface buffer.
 
-In the source buffer, match data is visalized and the anchored
+In the source buffer, match data is visualized and the anchored
 rule search limit is shown."
   (font-lock-studio-remove-source-overlays)
   (let ((buffer-read-only nil))
@@ -1256,7 +1308,17 @@ rule search limit is shown."
       (if (and font-lock-studio-auto-explain
                (not (let ((msg (current-message)))
                       (and msg
-                           (not (equal msg "Garbage collecting...done"))))))
+                           (not (equal msg "Garbage collecting...done"))
+                           ;; `edebug-read-and-maybe-wrap-form' use
+                           ;; `message' to display the name of the
+                           ;; function or form that was evaluated.
+                           ;;
+                           ;; Personally, I think this is incorrect --
+                           ;; messages should only be displayed when
+                           ;; interactive functions like `eval-debug'
+                           ;; are used.
+                           (not (save-match-data
+                                  (string-match "^Edebug: " msg)))))))
           (let ((msg (font-lock-studio-explain-state-at-point)))
             (if msg
                 (message msg))))))
@@ -1342,6 +1404,10 @@ See `font-lock-studio-insert-expr' for PREFIX."
         (t
          (if save-expression-point
              (setq font-lock-studio-edebug-expression-point (point)))
+         (if (and font-lock-studio-render-plain-closure-as-lambda
+                  (font-lock-studio-closurep matcher)
+                  (equal (nth 1 matcher) '(t)))
+             (setq matcher (cons 'lambda (cdr (cdr matcher)))))
          (font-lock-studio-insert-expr matcher prefix t))))
 
 
@@ -1517,12 +1583,12 @@ See `font-lock-keywords' for details."
     (let ((face (nth 1 highlight)))
       (cond ((symbolp face)
              (if (boundp face)
-                 (format "Face `%s' (via variable `%s')."
+                 (format "Face `%s' (via variable `%s')"
                          (symbol-value face)
                          face)
                (format
                 "\
-Face should come from variable `%s', which is unbound (missing quote?)."
+Face should come from variable `%s', which is unbound (missing quote?)"
                 face)))
             ((and (consp face)
                   (eq (car face) 'quote)
@@ -1531,7 +1597,7 @@ Face should come from variable `%s', which is unbound (missing quote?)."
                   (symbolp (car (cdr face))))
              (format "`%s' face." (car (cdr face))))
             (t
-             "Face is decided by expression.")))))
+             "Face is decided by expression")))))
 
 
 (defun font-lock-studio-explain-highlight-options (highlight)
@@ -1687,7 +1753,6 @@ A group is colored if there is a corresponding match in MD or of
 ALL is non-nil.  The group is colored according
 `font-lock-studio-color-list'."
   (let ((groups (font-lock-studio-find-groups-in-regexp regexp))
-        (group-number 0)
         (res ""))
     (let ((flat-list (font-lock-studio-flatten-match-data groups))
           (index 0))
@@ -1939,7 +2004,7 @@ Issue an error when not in an interface buffer."
 
 
 (defmacro font-lock-studio-command-wrapper-show-source (&rest body)
-  "Evaluate BODY like `progn', redraw the interface buffer ans show source."
+  "Evaluate BODY like `progn', redraw the interface buffer and show source."
   `(progn (font-lock-studio-command-wrapper
            ,@body)
           (font-lock-studio-show-source)))
@@ -2435,20 +2500,25 @@ Print result in minibuffer."
       (user-error "Matcher is not function symbol"))))
 
 
-;; Currently not used...
-(defun font-lock-studio-edebug-after-point ()
-  "Run expression after point with Edebug, in source buffer."
-  ;; Black magic and woodoo going on here...
-  ;;
-  ;; Essentially copied from `edebug-eval-top-level-form', with a
-  ;; different reader and with the buffer change.
-  (interactive)
-  (require 'edebug)
-  (let ((expr (let ((edebug-all-forms t)
-                    (edebug-all-defs t))
-                (edebug-read-and-maybe-wrap-form))))
-    (with-current-buffer font-lock-studio-buffer
-      (eval-expression expr))))
+(defmacro font-lock-studio-instrument-and-funcall (func &rest args)
+  "Temporarily instrument FUNC (a symbol) and call FUNC with ARGS.
+
+If FUNC already was instrumented, it will remain instrumented."
+  (let ((macro-var-original-function (make-symbol "--orig-func--"))
+        (macro-var-original-edebug-prop (make-symbol "--orig-edebug--")))
+    `(progn
+       (unless (fboundp ,func)
+         (user-error "Function %s is not defined" ,func))
+       ;; Save and restore the symbols function definition and the
+       ;; value of the `edebug' property. (The latter change when the
+       ;; function is instrumented.)
+       (let ((,macro-var-original-function (symbol-function ,func))
+             (,macro-var-original-edebug-prop (get ,func 'edebug)))
+         (edebug-instrument-function ,func)
+         (unwind-protect
+             (funcall ,func ,@args)
+           (fset ,func ,macro-var-original-function)
+           (put ,func 'edebug ,macro-var-original-edebug-prop))))))
 
 
 ;; ------------------------------------------------------------
@@ -2464,7 +2534,7 @@ Print result in minibuffer."
 ;; Note that the fontification engine should be able to function
 ;; without the interface buffer, so all user interaction should be
 ;; performed by code calling us. Unfortunately, this is somewhat
-;; intertwined with the interactive debugger thanks to the edebug
+;; intertwined with the interactive debugger thanks to the Edebug
 ;; integration.
 
 
@@ -2551,7 +2621,18 @@ This is expected to be called from a control buffer."
 
       ;; Run the "syntactic" font-lock phase.
       (font-lock-studio-save-buffer-state
-        (font-lock-fontify-syntactically-region beg end)))
+        (with-syntax-table (or font-lock-syntax-table (syntax-table))
+          ;; Suppress warning for obsolete variable
+          ;; `font-lock-syntactic-keywords'.  There are still many
+          ;; packages that use this variable, and we needs to be
+          ;; compatible with them.
+          (font-lock-studio-with-suppressed-warnings
+              ((obsolete font-lock-syntactic-keywords))
+            (when (and font-lock-syntactic-keywords
+                       (null syntax-propertize-function))
+              (font-lock-fontify-syntactic-keywords-region beg end)))
+          (unless font-lock-keywords-only
+            (font-lock-fontify-syntactically-region beg end)))))
 
     ;; Set up the control buffer.
     (set (make-local-variable 'font-lock-studio-keyword-number)
@@ -2692,10 +2773,7 @@ Update state and return non-nil if found."
   (font-lock-studio-assert (eq font-lock-studio-highlight-number nil))
   (let* ((kw (nth font-lock-studio-keyword-number
                   font-lock-studio-keywords))
-         (matcher (if (and font-lock-studio-edebug-active
-                           font-lock-studio-edebug-expression-point)
-                      (font-lock-studio-fontify-read-edebug-expression)
-                    (car kw)))
+         (matcher (font-lock-studio-maybe-instrument-matcher (car kw)))
          (res (font-lock-studio-fontify-match-matcher
                matcher
                ;; Limit
@@ -2703,6 +2781,29 @@ Update state and return non-nil if found."
     (when res
       (font-lock-studio-fontify-set-highlight 0 (cdr kw)))
     res))
+
+
+(defun font-lock-studio-maybe-instrument-matcher (matcher)
+  "Return matcher, maybe instrumented.
+
+If debug is enabled, try to read it from the Font Lock Studio
+buffer using Edebug.  Otherwise return MATCHER."
+  (if (and font-lock-studio-edebug-active
+           font-lock-studio-edebug-expression-point
+           (functionp matcher)
+           (not (symbolp matcher)))
+      ;; By reading the expression from the Font Long Studio interface
+      ;; buffer, debugging the expression using Edebug will take place
+      ;; in the interface buffer.
+      (let ((matcher-with-debug
+             (font-lock-studio-fontify-read-edebug-expression)))
+        (if (functionp matcher-with-debug)
+            matcher-with-debug
+          ;; This could be a closure, which Edebug can't read as a
+          ;; callable object.
+          ;; (c.f. `font-lock-studio-render-plain-closure-as-lambda'.)
+          matcher))
+    matcher))
 
 
 (defun font-lock-studio-fontify-match-matcher (matcher &optional limit
@@ -2723,7 +2824,11 @@ point forward one character in case matcher didn't move point."
                  (if (if (stringp matcher)
                          (re-search-forward matcher limit t)
                        (font-lock-studio-save-buffer-state
-                         (funcall matcher limit)))
+                         (if (and font-lock-studio-edebug-active
+                                  (symbolp matcher))
+                             (font-lock-studio-instrument-and-funcall
+                              matcher limit)
+                           (funcall matcher limit))))
                      (progn
                        (setq p (point))
                        t)
@@ -2789,12 +2894,9 @@ interface buffer itself."
     (let ((expr (let ((edebug-all-forms t)
                       (edebug-all-defs t))
                   (edebug-read-and-maybe-wrap-form))))
-      ;; Hack to compensate for the above wrapping lambda:s in a
-      ;; "(function (lambda (xxx)...))" construct, which can't be
-      ;; applied to "funcall".
-      ;;
-      ;; TODO: Check if this is something that is new to the Emacs
-      ;; trunk, it doesn't appear to behave like this in 24.3.
+      ;; Compensate for the above wrapping lambda:s in a "(function
+      ;; (lambda (xxx)...))" construct, which can't be applied to
+      ;; "funcall".
       (if (and (listp expr)
                (eq (car expr) 'function)
                (listp (nth 1 expr))
@@ -2913,10 +3015,8 @@ Return nil when no match was found."
   (let ((highlight (font-lock-studio-fontify-get-base-highlight)))
     (set-match-data font-lock-studio-keyword-match-data)
     (let ((matched (font-lock-studio-fontify-match-matcher
-                    (if (and font-lock-studio-edebug-active
-                             font-lock-studio-edebug-expression-point)
-                        (font-lock-studio-fontify-read-edebug-expression)
-                      (nth 0 highlight))
+                    (font-lock-studio-maybe-instrument-matcher
+                     (nth 0 highlight))
                     font-lock-studio-anchored-limit
                     'dont-move-point)))
       (font-lock-studio-fontify-set-next-anchored-state matched)
@@ -2984,7 +3084,7 @@ If BASE-HIGHLIGHT is non-nil, it should be the current base highlight."
 ;; For example, this may set :pre state even if there is no
 ;; PRE-MATCH-FORM in the highlight.
 (defun font-lock-studio-fontify-set-next-anchored-state0
-    (matched base-highlight)
+    (matched _base-highlight)
   "Set next anchored state, new state might not correspond to existing part.
 
 See `font-lock-studio-fontify-set-next-anchored-state' for
@@ -3150,8 +3250,7 @@ If ARG is non-nil, list all defined colors."
                    font-lock-function-name-face
                    font-lock-warning-face
                    font-lock-type-face
-                   nil
-                   )))
+                   nil)))
       (let ((indent ""))
         (dolist (face faces)
           (let ((s (concat (symbol-name face) indent)))
